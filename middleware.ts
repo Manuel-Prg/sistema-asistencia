@@ -27,32 +27,30 @@ export async function middleware(request: NextRequest) {
     },
   )
 
+  // Obtener usuario
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const isLoginPage = request.nextUrl.pathname === "/login"
-  const isSupervisorPage = request.nextUrl.pathname.startsWith("/supervisor")
-  const isStudentPage = request.nextUrl.pathname.startsWith("/student")
+  const pathname = request.nextUrl.pathname
+  const isLoginPage = pathname === "/login"
+  const isSupervisorPage = pathname.startsWith("/supervisor")
+  const isStudentPage = pathname.startsWith("/student")
+  const isProtectedRoute = isSupervisorPage || isStudentPage
 
-  // Redirect to login if not authenticated and trying to access protected routes
-  if (!user && !isLoginPage) {
+  // Si no hay usuario y está tratando de acceder a rutas protegidas → redirigir a login
+  if (!user && isProtectedRoute) {
     const redirectUrl = new URL("/login", request.url)
     return NextResponse.redirect(redirectUrl)
   }
 
-  // If authenticated and on login page, redirect to appropriate dashboard
+  // Si hay usuario y está en login → redirigir según su rol
   if (user && isLoginPage) {
-    const { data: profile, error } = await supabase
+    const { data: profile } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", user.id)
       .single()
-
-    if (error) {
-      console.error("Middleware: Error fetching profile:", error)
-      return NextResponse.redirect(new URL("/student", request.url))
-    }
 
     if (profile?.role === "supervisor") {
       return NextResponse.redirect(new URL("/supervisor", request.url))
@@ -61,8 +59,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Prevent supervisors from accessing student routes and vice versa
-  if (user && (isSupervisorPage || isStudentPage)) {
+  // Si hay usuario en ruta protegida → verificar que tenga el rol correcto
+  if (user && isProtectedRoute) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
@@ -70,9 +68,11 @@ export async function middleware(request: NextRequest) {
       .single()
 
     if (profile) {
+      // Supervisor tratando de acceder a student → redirigir a supervisor
       if (profile.role === "supervisor" && isStudentPage) {
         return NextResponse.redirect(new URL("/supervisor", request.url))
       }
+      // Student tratando de acceder a supervisor → redirigir a student
       if (profile.role === "student" && isSupervisorPage) {
         return NextResponse.redirect(new URL("/student", request.url))
       }
