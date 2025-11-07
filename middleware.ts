@@ -51,7 +51,6 @@ export async function middleware(request: NextRequest) {
 
     if (error) {
       console.error("Middleware: Error fetching profile:", error)
-      // On error, redirect to student by default
       return NextResponse.redirect(new URL("/student", request.url))
     }
 
@@ -71,11 +70,9 @@ export async function middleware(request: NextRequest) {
       .single()
 
     if (profile) {
-      // If supervisor tries to access student page, redirect to supervisor
       if (profile.role === "supervisor" && isStudentPage) {
         return NextResponse.redirect(new URL("/supervisor", request.url))
       }
-      // If student tries to access supervisor page, redirect to student
       if (profile.role === "student" && isSupervisorPage) {
         return NextResponse.redirect(new URL("/student", request.url))
       }
@@ -86,5 +83,15 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - /api/ (API routes)
+     * - /_next/static (static files)
+     * - /_next/image (image optimization files)
+     * - /favicon.ico, /logo/ (static files)
+     * - .*\\.(?:svg|png|jpg|jpeg|gif|webp)$ (image files)
+     */
+    "/((?!api/|_next/static|_next/image|favicon.ico|logo/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 }

@@ -1,89 +1,49 @@
-// app/api/active-students/route.ts
-import { NextResponse } from 'next/server'
-import { getSupabaseAdminClient } from '@/lib/supabase/admin'
+import { createClient } from "@supabase/supabase-js"
+import { NextResponse } from "next/server"
 
-export const dynamic = 'force-dynamic' // Desactiva cache
-export const revalidate = 0
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
+  console.log("🔵 API route /api/active-students called")
+  
   try {
-    const supabase = getSupabaseAdminClient()
-
-    // Obtener registros activos (sin check_out)
-    const { data: records, error: recordsError } = await supabase
-      .from('attendance_records')
-      .select(`
-        id,
-        student_id,
-        check_in,
-        room,
-        shift
-      `)
-      .is('check_out', null)
-      .order('check_in', { ascending: false })
-
-    if (recordsError) {
-      console.error('Error fetching attendance records:', recordsError)
-      return NextResponse.json(
-        { error: 'Error al obtener registros' },
-        { status: 500 }
-      )
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error("❌ Missing environment variables")
+      return NextResponse.json({ error: "Config error", activeStudents: [] })
     }
 
-    if (!records || records.length === 0) {
-      return NextResponse.json([])
-    }
-
-    // Obtener nombres de estudiantes
-    const studentIds = records.map((r) => r.student_id)
-    
-    const { data: students, error: studentsError } = await supabase
-      .from('students')
-      .select(`
-        id,
-        profiles!inner(full_name)
-      `)
-      .in('id', studentIds)
-
-    if (studentsError) {
-      console.error('Error fetching students:', studentsError)
-      // Devolver datos sin nombres si falla
-      return NextResponse.json(
-        records.map((record) => ({
-          id: record.id,
-          student_name: 'Cargando...',
-          room: record.room,
-          shift: record.shift,
-          check_in: record.check_in,
-        }))
-      )
-    }
-
-    // Mapear nombres a estudiantes
-    const studentMap = new Map()
-    students?.forEach((s: any) => {
-      studentMap.set(s.id, s.profiles?.full_name || 'Desconocido')
-    })
-
-    // Construir respuesta con datos mínimos necesarios
-    const activeStudents = records.map((record) => ({
-      id: record.id,
-      student_name: studentMap.get(record.student_id) || 'Desconocido',
-      room: record.room,
-      shift: record.shift,
-      check_in: record.check_in,
-    }))
-
-    return NextResponse.json(activeStudents, {
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
-      },
-    })
-  } catch (error) {
-    console.error('API error:', error)
-    return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      { auth: { autoRefreshToken: false, persistSession: false } }
     )
+
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const { data, error } = await supabaseAdmin
+      .from("attendance_records")
+      .select(`id, check_in, shift, room, student:students!inner(profile:profiles!inner(full_name))`)
+      .gte("check_in", today.toISOString())
+      .is("check_out", null)
+
+    if (error) {
+      console.error("Supabase error:", error)
+      return NextResponse.json({ error: error.message, activeStudents: [] })
+    }
+
+    const formatted = data?.map((r: any) => ({
+      id: r.id,
+      studentName: r.student?.profile?.full_name || "Sin nombre",
+      checkIn: r.check_in,
+      shift: r.shift,
+      room: r.room,
+    })) || []
+
+    console.log(`✅ Found ${formatted.length} active students`)
+    return NextResponse.json({ activeStudents: formatted })
+  } catch (error: any) {
+    console.error("Unexpected error:", error)
+    return NextResponse.json({ error: "Server error", activeStudents: [] })
   }
 }
