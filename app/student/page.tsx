@@ -1,3 +1,4 @@
+// app/student/page.tsx
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { CheckInOutCard } from "@/components/student/check-in-out-card"

@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { getSupabaseBrowserClient } from "@/lib/supabase/client"
@@ -27,37 +26,25 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      // Solo hacer login - el middleware se encargará de redirigir
+      const { error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
-      if (authError) throw authError
-
-      if (!authData.user) {
-        throw new Error("No se pudo obtener los datos del usuario")
+      if (authError) {
+        throw authError
       }
 
+      console.log("Login successful, redirecting...")
+
+      // Esperar un momento para que se establezca la sesión
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", authData.user.id)
-        .single()
-
-      if (profileError) {
-        console.error("Error fetching profile:", profileError)
-        throw new Error("No se pudo obtener el perfil del usuario")
-      }
-
-      if (!profile) {
-        throw new Error("Perfil de usuario no encontrado")
-      }
-
-      console.log("User role:", profile.role)
-
-      window.location.href = profile.role === "supervisor" ? "/supervisor" : "/student"
+      // Redirigir a la raíz - el middleware redirigirá al dashboard correcto
+      console.log("About to redirect to /")
+      window.location.href = "/"
+      
     } catch (err: any) {
       console.error("Login error:", err)
       setError(err.message || "Error al iniciar sesión")

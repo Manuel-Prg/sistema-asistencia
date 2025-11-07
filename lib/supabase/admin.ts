@@ -1,3 +1,4 @@
+// lib/supabase/admin.ts
 import { createClient } from "@supabase/supabase-js"
 
 // Cliente de administrador con Service Role Key

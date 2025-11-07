@@ -1,3 +1,4 @@
+// app/supervisor/page.tsx
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { StatsCards } from "@/components/supervisor/stats-cards"
 import { ActiveStudents } from "@/components/supervisor/active-students"

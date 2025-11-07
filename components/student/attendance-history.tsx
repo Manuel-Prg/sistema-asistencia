@@ -1,3 +1,4 @@
+// components/student/attendance-history.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar, Clock } from "lucide-react"
 import { format } from "date-fns"

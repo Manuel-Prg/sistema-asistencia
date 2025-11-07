@@ -1,3 +1,4 @@
+// components/student/student-nav.tsx
 "use client"
 
 import { ClipboardCheck, LogOut } from "lucide-react"

@@ -1,3 +1,4 @@
+// app/supervisor/layout.tsx
 import type React from "react"
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"

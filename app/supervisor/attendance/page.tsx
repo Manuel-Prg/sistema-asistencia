@@ -1,3 +1,4 @@
+// app/supervisor/attendance/page.tsx
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { AttendanceTable } from "@/components/supervisor/attendance-table"
 import { ExportButton } from "@/components/supervisor/export-button"

@@ -1,3 +1,4 @@
+// components/supervisor/active-students.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { History, Clock } from "lucide-react"

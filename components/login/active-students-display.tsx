@@ -1,9 +1,9 @@
+// components/login/active-students-display.tsx
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Clock, Users } from "lucide-react"
-import { getSupabaseBrowserClient } from "@/lib/supabase/client"
 import useSWR from "swr"
 import { differenceInMinutes } from "date-fns"
 
@@ -15,73 +15,30 @@ interface ActiveStudent {
   check_in: string
 }
 
-const fetcher = async () => {
-  const supabase = getSupabaseBrowserClient()
-
-  const { data: records, error: recordsError } = await supabase
-    .from("attendance_records")
-    .select(`
-      id,
-      student_id,
-      check_in,
-      room,
-      shift
-    `)
-    .is("check_out", null)
-    .order("check_in", { ascending: false })
-
-  if (recordsError) {
-    return []
-  }
-
-  if (!records || records.length === 0) {
-    return []
-  }
-
-  const studentIds = records.map((r: any) => r.student_id)
-  
-  const { data: students, error: studentsError } = await supabase
-    .from("students")
-    .select(`
-      id,
-      profile:profiles(full_name)
-    `)
-    .in("id", studentIds)
-
-  if (studentsError) {
-
-    return records.map((record: any) => ({
-      id: record.id,
-      student_name: "Cargando...",
-      room: record.room,
-      shift: record.shift,
-      check_in: record.check_in,
-    }))
-  }
-
-  const studentMap = new Map()
-  students?.forEach((s: any) => {
-    studentMap.set(s.id, s.profile?.full_name || "Desconocido")
+// Fetcher que usa la API route en lugar de Supabase directamente
+const fetcher = async (url: string) => {
+  const response = await fetch(url, {
+    cache: 'no-store',
+    headers: {
+      'Cache-Control': 'no-cache',
+    },
   })
-
-  const result = records.map((record: any) => ({
-    id: record.id,
-    student_name: studentMap.get(record.student_id) || "Desconocido",
-    room: record.room,
-    shift: record.shift,
-    check_in: record.check_in,
-  }))
-
-  return result
+  
+  if (!response.ok) {
+    throw new Error('Error al cargar estudiantes activos')
+  }
+  
+  return response.json()
 }
 
 export function ActiveStudentsDisplay() {
   const { data: activeStudents = [], isLoading, error } = useSWR<ActiveStudent[]>(
-    "active-students",
+    '/api/active-students',
     fetcher,
     {
-      refreshInterval: 30000,
+      refreshInterval: 30000, // Actualizar cada 30 segundos
       revalidateOnFocus: true,
+      dedupingInterval: 10000, // Evitar duplicar requests
     }
   )
 
@@ -126,9 +83,12 @@ export function ActiveStudentsDisplay() {
             No hay estudiantes activos en este momento
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-96 overflow-y-auto">
             {activeStudents.map((student) => (
-              <div key={student.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+              <div 
+                key={student.id} 
+                className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted/70 transition-colors"
+              >
                 <div className="flex-1">
                   <p className="font-medium">{student.student_name}</p>
                   <div className="flex items-center gap-2 mt-1">

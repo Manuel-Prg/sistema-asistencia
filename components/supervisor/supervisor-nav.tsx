@@ -1,3 +1,4 @@
+// components/supervisor/supervisor-nav.tsx
 "use client"
 
 import { ClipboardCheck, LogOut, LayoutDashboard, Users, History } from "lucide-react"
