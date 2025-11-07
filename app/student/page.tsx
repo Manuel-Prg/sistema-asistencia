@@ -14,15 +14,13 @@ export default async function StudentDashboard() {
   if (!user) {
     redirect("/login")
   }
-
-  // Get student data
+  
   const { data: student } = await supabase.from("students").select("*, profile:profiles(*)").eq("id", user.id).single()
 
   if (!student) {
     redirect("/login")
   }
 
-  // Get active check-in
   const { data: activeRecord } = await supabase
     .from("attendance_records")
     .select("*")
@@ -30,7 +28,6 @@ export default async function StudentDashboard() {
     .is("check_out", null)
     .single()
 
-  // Get recent attendance records
   const { data: recentRecords } = await supabase
     .from("attendance_records")
     .select("*")

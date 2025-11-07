@@ -18,9 +18,6 @@ interface ActiveStudent {
 const fetcher = async () => {
   const supabase = getSupabaseBrowserClient()
 
-  console.log("🔍 Fetching active students...")
-
-  // Get active attendance records (where check_out is null)
   const { data: records, error: recordsError } = await supabase
     .from("attendance_records")
     .select(`
@@ -33,25 +30,15 @@ const fetcher = async () => {
     .is("check_out", null)
     .order("check_in", { ascending: false })
 
-  console.log("📋 Attendance records:", records)
-  console.log("❌ Records error:", recordsError)
-
   if (recordsError) {
-    console.error("Error fetching attendance records:", recordsError)
     return []
   }
 
   if (!records || records.length === 0) {
-    console.log("⚠️ No active attendance records found")
     return []
   }
 
-  console.log(`✅ Found ${records.length} active attendance records`)
-
-  // Get student profiles
   const studentIds = records.map((r: any) => r.student_id)
-  
-  console.log("👥 Student IDs to fetch:", studentIds)
   
   const { data: students, error: studentsError } = await supabase
     .from("students")
@@ -61,12 +48,8 @@ const fetcher = async () => {
     `)
     .in("id", studentIds)
 
-  console.log("👤 Students data:", students)
-  console.log("❌ Students error:", studentsError)
-
   if (studentsError) {
-    console.error("Error fetching students:", studentsError)
-    // If we can't get student names, still show the records
+
     return records.map((record: any) => ({
       id: record.id,
       student_name: "Cargando...",
@@ -76,15 +59,11 @@ const fetcher = async () => {
     }))
   }
 
-  // Create a map of student IDs to names
   const studentMap = new Map()
   students?.forEach((s: any) => {
     studentMap.set(s.id, s.profile?.full_name || "Desconocido")
   })
 
-  console.log("🗺️ Student map:", Object.fromEntries(studentMap))
-
-  // Combine the data
   const result = records.map((record: any) => ({
     id: record.id,
     student_name: studentMap.get(record.student_id) || "Desconocido",
@@ -93,8 +72,6 @@ const fetcher = async () => {
     check_in: record.check_in,
   }))
 
-  console.log("✅ Final result:", result)
-  
   return result
 }
 

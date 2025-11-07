@@ -14,7 +14,6 @@ export async function checkIn(room: string, shift: "matutino" | "vespertino") {
     return { error: "No autenticado" }
   }
 
-  // Check if there's already an active check-in (no check-out)
   const { data: activeRecord } = await supabase
     .from("attendance_records")
     .select("*")
@@ -77,14 +76,12 @@ export async function checkOut(earlyDepartureReason?: string) {
     updateData.early_departure_reason = earlyDepartureReason
   }
 
-  // Update the record with check-out time and hours worked
   const { error: updateError } = await supabase.from("attendance_records").update(updateData).eq("id", activeRecord.id)
 
   if (updateError) {
     return { error: updateError.message }
   }
 
-  // Update student's accumulated hours
   const { data: student } = await supabase.from("students").select("accumulated_hours").eq("id", user.id).single()
 
   if (student) {

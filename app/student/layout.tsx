@@ -21,9 +21,7 @@ export default async function StudentLayout({
   const { data: profile } = await supabase.from("profiles").select("role, full_name").eq("id", user.id).single()
 
   if (profile?.role !== "student") {
-    // If the profile exists but role is not student, send to login so
-    // middleware/layouts can re-evaluate session/profile instead of
-    // bouncing between dashboards which can create a redirect loop.
+
     redirect("/login")
   }
 
