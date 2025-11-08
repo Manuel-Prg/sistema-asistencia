@@ -21,6 +21,7 @@ export interface Student {
 }
 
 export interface AttendanceRecord {
+  early_departure_reason: any
   id: string
   student_id: string
   check_in: string

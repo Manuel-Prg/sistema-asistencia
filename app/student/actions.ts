@@ -1,19 +1,24 @@
-// actions.ts
+// app/student/actions.ts
 "use server"
 
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
 export async function checkIn(room: string, shift: "matutino" | "vespertino") {
+  console.log("=== CHECK-IN INICIADO ===")
   const supabase = await getSupabaseServerClient()
 
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser()
+  
   if (userError || !user) {
+    console.error("Error de autenticación:", userError)
     return { error: "No autenticado" }
   }
+
+  console.log("Usuario:", user.id)
 
   const { data: activeRecord } = await supabase
     .from("attendance_records")
@@ -23,6 +28,7 @@ export async function checkIn(room: string, shift: "matutino" | "vespertino") {
     .single()
 
   if (activeRecord) {
+    console.log("Ya existe entrada activa:", activeRecord.id)
     return { error: "Ya tienes una entrada activa. Debes registrar salida primero." }
   }
 
@@ -34,23 +40,30 @@ export async function checkIn(room: string, shift: "matutino" | "vespertino") {
   })
 
   if (error) {
+    console.error("Error al insertar registro:", error)
     return { error: error.message }
   }
 
+  console.log("=== CHECK-IN EXITOSO ===")
   revalidatePath("/student")
   return { success: true }
 }
 
 export async function checkOut(earlyDepartureReason?: string) {
+  console.log("=== CHECK-OUT INICIADO ===")
   const supabase = await getSupabaseServerClient()
 
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser()
+  
   if (userError || !user) {
+    console.error("Error de autenticación:", userError)
     return { error: "No autenticado" }
   }
+
+  console.log("Usuario:", user.id)
 
   // Find the active check-in
   const { data: activeRecord, error: fetchError } = await supabase
@@ -61,12 +74,19 @@ export async function checkOut(earlyDepartureReason?: string) {
     .single()
 
   if (fetchError || !activeRecord) {
+    console.error("Error buscando registro activo:", fetchError)
     return { error: "No hay entrada activa para registrar salida" }
   }
+
+  console.log("Registro activo encontrado:", activeRecord.id)
+  console.log("Check-in time:", activeRecord.check_in)
 
   const checkInTime = new Date(activeRecord.check_in)
   const checkOutTime = new Date()
   const hoursWorked = (checkOutTime.getTime() - checkInTime.getTime()) / (1000 * 60 * 60)
+
+  console.log("Check-out time:", checkOutTime.toISOString())
+  console.log("Horas trabajadas:", hoursWorked)
 
   const updateData: any = {
     check_out: checkOutTime.toISOString(),
@@ -75,31 +95,61 @@ export async function checkOut(earlyDepartureReason?: string) {
 
   if (earlyDepartureReason) {
     updateData.early_departure_reason = earlyDepartureReason
+    console.log("Razón de salida temprana:", earlyDepartureReason)
   }
 
-  const { error: updateError } = await supabase.from("attendance_records").update(updateData).eq("id", activeRecord.id)
+  const { error: updateError } = await supabase
+    .from("attendance_records")
+    .update(updateData)
+    .eq("id", activeRecord.id)
 
   if (updateError) {
+    console.error("Error actualizando registro:", updateError)
     return { error: updateError.message }
   }
 
-  const { data: student } = await supabase.from("students").select("accumulated_hours").eq("id", user.id).single()
+  console.log("Registro actualizado exitosamente")
 
-  if (student) {
-    await supabase
-      .from("students")
-      .update({
-        accumulated_hours: (student.accumulated_hours || 0) + hoursWorked,
-      })
-      .eq("id", user.id)
+  // Update student's accumulated hours
+  const { data: student, error: studentError } = await supabase
+    .from("students")
+    .select("accumulated_hours")
+    .eq("id", user.id)
+    .single()
+
+  if (studentError) {
+    console.error("Error obteniendo estudiante:", studentError)
+    return { error: "Error al actualizar horas acumuladas" }
   }
 
+  console.log("Horas acumuladas actuales:", student.accumulated_hours)
+
+  const newAccumulatedHours = (student.accumulated_hours || 0) + hoursWorked
+  console.log("Nuevas horas acumuladas:", newAccumulatedHours)
+
+  const { error: updateStudentError } = await supabase
+    .from("students")
+    .update({
+      accumulated_hours: newAccumulatedHours,
+    })
+    .eq("id", user.id)
+
+  if (updateStudentError) {
+    console.error("Error actualizando horas acumuladas:", updateStudentError)
+    return { error: "Error al actualizar horas acumuladas" }
+  }
+
+  console.log("=== CHECK-OUT EXITOSO ===")
+  console.log("Total de horas registradas:", hoursWorked)
+  console.log("Horas acumuladas totales:", newAccumulatedHours)
+
   revalidatePath("/student")
+  
   return { success: true, hoursWorked }
 }
 
 export async function signOut() {
   const supabase = await getSupabaseServerClient()
   await supabase.auth.signOut()
-  revalidatePath("/login")
+  revalidatePath("/")
 }

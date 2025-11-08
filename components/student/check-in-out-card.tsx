@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { LogIn, LogOut, Clock } from "lucide-react"
+import { LogIn, LogOut, Clock, MapPin, Sun, Moon } from "lucide-react"
 import { checkIn, checkOut } from "@/app/student/actions"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
@@ -37,6 +37,10 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
       setMessage({ type: "error", text: result.error })
     } else {
       setMessage({ type: "success", text: "Entrada registrada exitosamente" })
+      // Force page reload to update all data
+      setTimeout(() => {
+        window.location.reload()
+      }, 1000)
     }
 
     setLoading(false)
@@ -45,19 +49,16 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
   const handleCheckOut = async () => {
     if (!activeRecord) return
 
-    // Calculate hours worked
     const checkInTime = new Date(activeRecord.check_in)
     const checkOutTime = new Date()
     const hoursWorked = (checkOutTime.getTime() - checkInTime.getTime()) / (1000 * 60 * 60)
 
-    // If less than 4 hours, show dialog
     if (hoursWorked < 4) {
       setCalculatedHours(hoursWorked)
       setShowEarlyDepartureDialog(true)
       return
     }
 
-    // If 4 or more hours, proceed normally
     await performCheckOut()
   }
 
@@ -74,6 +75,10 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
         type: "success",
         text: `Salida registrada. Trabajaste ${result.hoursWorked?.toFixed(2)} horas`,
       })
+      // Force page reload to update all data
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500)
     }
 
     setLoading(false)
@@ -81,73 +86,135 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-indigo-600" />
+      <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm hover:shadow-2xl transition-shadow duration-300">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl">
+            <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
+              <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+            </div>
             Registro de Asistencia
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm sm:text-base">
             {activeRecord ? "Tienes una entrada activa" : "Registra tu entrada al turno"}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 sm:space-y-5">
           {activeRecord ? (
             <div className="space-y-4">
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg space-y-2">
-                <p className="text-sm font-medium text-green-900">Entrada activa</p>
-                <p className="text-xs text-green-700">
-                  Hora de entrada: {format(new Date(activeRecord.check_in), "PPp", { locale: es })}
-                </p>
-                <p className="text-xs text-green-700">
-                  Turno: {activeRecord.shift === "matutino" ? "Matutino (10:00 - 14:00)" : "Vespertino (14:00 - 18:00)"}
-                </p>
-                <p className="text-xs text-green-700">Sala: {activeRecord.room}</p>
+              {/* Active Record Card */}
+              <div className="relative overflow-hidden p-4 sm:p-5 bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl space-y-3">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-200/30 rounded-full -mr-12 -mt-12" />
+                <div className="absolute bottom-0 left-0 w-16 h-16 bg-teal-200/30 rounded-full -ml-8 -mb-8" />
+                
+                <div className="relative space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 bg-emerald-500 rounded-full animate-pulse" />
+                    <p className="text-sm sm:text-base font-semibold text-emerald-900">Entrada activa</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2 text-xs sm:text-sm text-emerald-800">
+                      <Clock className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      <span>
+                        {format(new Date(activeRecord.check_in), "EEEE, d 'de' MMMM 'a las' HH:mm", { locale: es })}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-start gap-2 text-xs sm:text-sm text-emerald-800">
+                      {activeRecord.shift === "matutino" ? (
+                        <Sun className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      ) : (
+                        <Moon className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      )}
+                      <span>
+                        Turno {activeRecord.shift === "matutino" ? "Matutino (10:00 - 14:00)" : "Vespertino (14:00 - 18:00)"}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-start gap-2 text-xs sm:text-sm text-emerald-800">
+                      <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      <span>{activeRecord.room}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <Button onClick={handleCheckOut} disabled={loading} className="w-full gap-2" variant="destructive">
-                <LogOut className="h-4 w-4" />
+
+              <Button 
+                onClick={handleCheckOut} 
+                disabled={loading} 
+                className="w-full gap-2 h-12 sm:h-14 text-base sm:text-lg font-semibold bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 shadow-lg hover:shadow-xl transition-all duration-200" 
+                variant="destructive"
+              >
+                <LogOut className="h-5 w-5 sm:h-6 sm:w-6" />
                 {loading ? "Registrando..." : "Registrar Salida"}
               </Button>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 sm:space-y-5">
+              {/* Room Selection */}
               <div className="space-y-2">
-                <Label htmlFor="room">Selecciona la sala</Label>
+                <Label htmlFor="room" className="text-sm sm:text-base font-medium flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-indigo-600" />
+                  Selecciona la sala
+                </Label>
                 <Select value={room} onValueChange={setRoom}>
-                  <SelectTrigger id="room">
+                  <SelectTrigger id="room" className="h-11 sm:h-12 text-sm sm:text-base">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {ROOMS.map((r) => (
-                      <SelectItem key={r} value={r}>
+                      <SelectItem key={r} value={r} className="text-sm sm:text-base">
                         {r}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Shift Selection */}
               <div className="space-y-2">
-                <Label htmlFor="shift">Selecciona tu turno</Label>
+                <Label htmlFor="shift" className="text-sm sm:text-base font-medium flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-indigo-600" />
+                  Selecciona tu turno
+                </Label>
                 <Select value={shift} onValueChange={(value: any) => setShift(value)}>
-                  <SelectTrigger id="shift">
+                  <SelectTrigger id="shift" className="h-11 sm:h-12 text-sm sm:text-base">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="matutino">Matutino (10:00 - 14:00)</SelectItem>
-                    <SelectItem value="vespertino">Vespertino (14:00 - 18:00)</SelectItem>
+                    <SelectItem value="matutino" className="text-sm sm:text-base">
+                      <div className="flex items-center gap-2">
+                        <Sun className="h-4 w-4" />
+                        Matutino (10:00 - 14:00)
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="vespertino" className="text-sm sm:text-base">
+                      <div className="flex items-center gap-2">
+                        <Moon className="h-4 w-4" />
+                        Vespertino (14:00 - 18:00)
+                      </div>
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <Button onClick={handleCheckIn} disabled={loading} className="w-full gap-2">
-                <LogIn className="h-4 w-4" />
+
+              <Button 
+                onClick={handleCheckIn} 
+                disabled={loading} 
+                className="w-full gap-2 h-12 sm:h-14 text-base sm:text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                <LogIn className="h-5 w-5 sm:h-6 sm:w-6" />
                 {loading ? "Registrando..." : "Registrar Entrada"}
               </Button>
             </div>
           )}
 
           {message && (
-            <Alert variant={message.type === "error" ? "destructive" : "default"}>
-              <AlertDescription>{message.text}</AlertDescription>
+            <Alert 
+              variant={message.type === "error" ? "destructive" : "default"}
+              className={message.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-900" : ""}
+            >
+              <AlertDescription className="text-sm sm:text-base">{message.text}</AlertDescription>
             </Alert>
           )}
         </CardContent>
