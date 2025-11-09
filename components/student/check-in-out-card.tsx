@@ -2,6 +2,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -20,6 +21,7 @@ interface CheckInOutCardProps {
 const ROOMS = ["Sala 1", "Sala 2 y Galería", "Sala 3", "Sala 4 y 5"]
 
 export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
+  const router = useRouter()
   const [shift, setShift] = useState<"matutino" | "vespertino">("matutino")
   const [room, setRoom] = useState<string>(ROOMS[0])
   const [loading, setLoading] = useState(false)
@@ -35,15 +37,15 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
 
     if (result.error) {
       setMessage({ type: "error", text: result.error })
+      setLoading(false)
     } else {
       setMessage({ type: "success", text: "Entrada registrada exitosamente" })
-      // Force page reload to update all data
+      // ✅ Usar router.refresh() para actualizar los datos del servidor
       setTimeout(() => {
-        window.location.reload()
+        router.refresh()
+        setLoading(false)
       }, 1000)
     }
-
-    setLoading(false)
   }
 
   const handleCheckOut = async () => {
@@ -70,18 +72,18 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
 
     if (result.error) {
       setMessage({ type: "error", text: result.error })
+      setLoading(false)
     } else {
       setMessage({
         type: "success",
         text: `Salida registrada. Trabajaste ${result.hoursWorked?.toFixed(2)} horas`,
       })
-      // Force page reload to update all data
+      // ✅ Esperar un poco más para que el trigger se ejecute y luego refrescar
       setTimeout(() => {
-        window.location.reload()
+        router.refresh()
+        setLoading(false)
       }, 1500)
     }
-
-    setLoading(false)
   }
 
   return (

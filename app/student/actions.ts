@@ -98,6 +98,8 @@ export async function checkOut(earlyDepartureReason?: string) {
     console.log("Razón de salida temprana:", earlyDepartureReason)
   }
 
+  // ✅ Solo actualizar el registro de asistencia
+  // El trigger de la BD se encargará de actualizar accumulated_hours automáticamente
   const { error: updateError } = await supabase
     .from("attendance_records")
     .update(updateData)
@@ -108,41 +110,14 @@ export async function checkOut(earlyDepartureReason?: string) {
     return { error: updateError.message }
   }
 
-  console.log("Registro actualizado exitosamente")
-
-  // Update student's accumulated hours
-  const { data: student, error: studentError } = await supabase
-    .from("students")
-    .select("accumulated_hours")
-    .eq("id", user.id)
-    .single()
-
-  if (studentError) {
-    console.error("Error obteniendo estudiante:", studentError)
-    return { error: "Error al actualizar horas acumuladas" }
-  }
-
-  console.log("Horas acumuladas actuales:", student.accumulated_hours)
-
-  const newAccumulatedHours = (student.accumulated_hours || 0) + hoursWorked
-  console.log("Nuevas horas acumuladas:", newAccumulatedHours)
-
-  const { error: updateStudentError } = await supabase
-    .from("students")
-    .update({
-      accumulated_hours: newAccumulatedHours,
-    })
-    .eq("id", user.id)
-
-  if (updateStudentError) {
-    console.error("Error actualizando horas acumuladas:", updateStudentError)
-    return { error: "Error al actualizar horas acumuladas" }
-  }
-
   console.log("=== CHECK-OUT EXITOSO ===")
-  console.log("Total de horas registradas:", hoursWorked)
-  console.log("Horas acumuladas totales:", newAccumulatedHours)
+  console.log("Horas registradas:", hoursWorked)
+  console.log("El trigger actualizará las horas acumuladas automáticamente")
 
+  // ✅ Esperar un momento para que el trigger se ejecute
+  await new Promise(resolve => setTimeout(resolve, 500))
+
+  // ✅ Revalidar la página para que se muestren los datos actualizados
   revalidatePath("/student")
   
   return { success: true, hoursWorked }

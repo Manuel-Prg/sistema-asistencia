@@ -4,6 +4,12 @@ import { redirect } from "next/navigation"
 import { CheckInOutCard } from "@/components/student/check-in-out-card"
 import { ProgressCard } from "@/components/student/progress-card"
 import { AttendanceHistory } from "@/components/student/attendance-history"
+import { RefreshButton } from "@/components/refresh-button"
+
+// ✅ CRÍTICO: Deshabilitar caché para esta página
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
 
 export default async function StudentDashboard() {
   const supabase = await getSupabaseServerClient()
@@ -16,7 +22,12 @@ export default async function StudentDashboard() {
     redirect("/login")
   }
   
-  const { data: student } = await supabase.from("students").select("*, profile:profiles(*)").eq("id", user.id).single()
+  // ✅ Agregar timestamp para forzar queries frescas
+  const { data: student } = await supabase
+    .from("students")
+    .select("*, profile:profiles(*)")
+    .eq("id", user.id)
+    .single()
 
   if (!student) {
     redirect("/login")
@@ -41,13 +52,16 @@ export default async function StudentDashboard() {
       <div className="container mx-auto px-4 py-6 sm:py-8 max-w-7xl">
         <div className="space-y-6 sm:space-y-8">
           {/* Header Section - Mobile Optimized */}
-          <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 tracking-tight">
-              Panel de Control
-            </h1>
-            <p className="text-sm sm:text-base text-gray-600">
-              Gestiona tu asistencia y visualiza tu progreso
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="space-y-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 tracking-tight">
+                Panel de Control
+              </h1>
+              <p className="text-sm sm:text-base text-gray-600">
+                Gestiona tu asistencia y visualiza tu progreso
+              </p>
+            </div>
+            <RefreshButton />
           </div>
 
           {/* Cards Grid - Responsive */}
