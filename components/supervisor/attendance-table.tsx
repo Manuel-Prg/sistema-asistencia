@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Clock } from "lucide-react"
+import { formatDateTime } from "@/lib/utils/date-formatter"
 
 interface AttendanceRecord {
   id: string
@@ -23,32 +24,17 @@ interface AttendanceTableProps {
 }
 
 export function AttendanceTable({ records }: AttendanceTableProps) {
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString)
-    return {
-      date: date.toLocaleDateString('es-MX', { 
-        day: '2-digit', 
-        month: 'short', 
-        year: 'numeric' 
-      }),
-      time: date.toLocaleTimeString('es-MX', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      })
-    }
-  }
-
   const getShiftBadge = (shift: string) => {
     if (shift === "vespertino") {
       return (
-        <Badge className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 shadow-sm text-xs">
-          Vespertino
+        <Badge className="bg-gradient-to-r from-orange-500 to-amber-600 text-white border-0 shadow-sm text-xs">
+          🌙 Vespertino
         </Badge>
       )
     }
     return (
-      <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-sm text-xs">
-        Matutino
+      <Badge className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-0 shadow-sm text-xs">
+        ☀️ Matutino
       </Badge>
     )
   }
@@ -56,14 +42,14 @@ export function AttendanceTable({ records }: AttendanceTableProps) {
   const getStatusBadge = (checkOut: string | null) => {
     if (!checkOut) {
       return (
-        <Badge className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 shadow-sm animate-pulse">
-          Activo
+        <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0 shadow-sm animate-pulse">
+          ● Activo
         </Badge>
       )
     }
     return (
       <Badge className="bg-gray-100 text-gray-700 border border-gray-300">
-        Completado
+        ✓ Completado
       </Badge>
     )
   }

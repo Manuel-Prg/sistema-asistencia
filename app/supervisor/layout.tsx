@@ -34,7 +34,11 @@ export default async function SupervisorLayout({
     <div className="min-h-screen bg-gray-50">
       <SupervisorNav userName={profile.full_name} />
       <main className="container mx-auto px-4 py-6">{children}</main>
-      <Toaster position="top-right" richColors />
+      <Toaster 
+      position="top-right"
+       richColors
+       closeButton
+       duration={4000} />
     </div>
   )
 }
