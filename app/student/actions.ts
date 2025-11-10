@@ -98,8 +98,6 @@ export async function checkOut(earlyDepartureReason?: string) {
     console.log("Razón de salida temprana:", earlyDepartureReason)
   }
 
-  // ✅ Solo actualizar el registro de asistencia
-  // El trigger de la BD se encargará de actualizar accumulated_hours automáticamente
   const { error: updateError } = await supabase
     .from("attendance_records")
     .update(updateData)
@@ -114,10 +112,8 @@ export async function checkOut(earlyDepartureReason?: string) {
   console.log("Horas registradas:", hoursWorked)
   console.log("El trigger actualizará las horas acumuladas automáticamente")
 
-  // ✅ Esperar un momento para que el trigger se ejecute
   await new Promise(resolve => setTimeout(resolve, 500))
 
-  // ✅ Revalidar la página para que se muestren los datos actualizados
   revalidatePath("/student")
   
   return { success: true, hoursWorked }

@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js"
 import { NextResponse } from "next/server"
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function GET() {
   console.log("🔵 API route /api/active-students called")
@@ -19,19 +20,28 @@ export async function GET() {
       { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
+    // ✅ CORREGIDO: No filtrar por fecha, solo buscar check_out = null
+    // Esto encontrará TODOS los registros activos sin importar cuándo hicieron check-in
     const { data, error } = await supabaseAdmin
       .from("attendance_records")
-      .select(`id, check_in, shift, room, student:students!inner(profile:profiles!inner(full_name))`)
-      .gte("check_in", today.toISOString())
+      .select(`
+        id, 
+        check_in, 
+        shift, 
+        room, 
+        student:students!inner(
+          profile:profiles!inner(full_name)
+        )
+      `)
       .is("check_out", null)
+      .order("check_in", { ascending: false })
 
     if (error) {
-      console.error("Supabase error:", error)
+      console.error("❌ Supabase error:", error)
       return NextResponse.json({ error: error.message, activeStudents: [] })
     }
+
+    console.log("📊 Raw data from Supabase:", JSON.stringify(data, null, 2))
 
     const formatted = data?.map((r: any) => ({
       id: r.id,
@@ -41,10 +51,20 @@ export async function GET() {
       room: r.room,
     })) || []
 
-    console.log(`✅ Found ${formatted.length} active students`)
-    return NextResponse.json({ activeStudents: formatted })
+    console.log(`✅ Found ${formatted.length} active students:`, formatted)
+    
+    return NextResponse.json({ activeStudents: formatted }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      }
+    })
   } catch (error: any) {
-    console.error("Unexpected error:", error)
-    return NextResponse.json({ error: "Server error", activeStudents: [] })
+    console.error("❌ Unexpected error:", error)
+    return NextResponse.json({ 
+      error: error.message || "Server error", 
+      activeStudents: [] 
+    })
   }
 }

@@ -18,7 +18,7 @@ interface CheckInOutCardProps {
   activeRecord: any
 }
 
-const ROOMS = ["Sala 1", "Sala 2 y Galería", "Sala 3", "Sala 4 y 5"]
+const ROOMS = ["Sala 1", "Sala 2", "Sala 2 y Galería", "Sala 3", "Sala 4", "Sala 4 y 5", "Site"]
 
 export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
   const router = useRouter()

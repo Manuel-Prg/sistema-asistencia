@@ -6,7 +6,6 @@ import { ProgressCard } from "@/components/student/progress-card"
 import { AttendanceHistory } from "@/components/student/attendance-history"
 import { RefreshButton } from "@/components/refresh-button"
 
-// ✅ CRÍTICO: Deshabilitar caché para esta página
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 export const fetchCache = 'force-no-store'
@@ -22,7 +21,6 @@ export default async function StudentDashboard() {
     redirect("/login")
   }
   
-  // ✅ Agregar timestamp para forzar queries frescas
   const { data: student } = await supabase
     .from("students")
     .select("*, profile:profiles(*)")
