@@ -11,52 +11,93 @@ interface RecentActivityProps {
 export function RecentActivity({ records }: RecentActivityProps) {
   if (records.length === 0) {
     return (
-      <Card>
-        <CardHeader>
+      <Card className="border-0 shadow-xl">
+        <CardHeader className="pb-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-indigo-100">
           <CardTitle className="flex items-center gap-2">
-            <History className="h-5 w-5 text-indigo-600" />
-            Actividad Reciente
+            <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
+              <History className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-lg sm:text-xl">Actividad Reciente</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground text-center py-8">
-            No hay actividad reciente
-          </p>
+        <CardContent className="p-4 sm:p-6">
+          <div className="text-center py-8">
+            <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+              <History className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400" />
+            </div>
+            <p className="text-sm text-gray-600 font-medium">
+              No hay actividad reciente
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Las salidas recientes aparecerán aquí
+            </p>
+          </div>
         </CardContent>
       </Card>
     )
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="border-0 shadow-xl">
+      <CardHeader className="pb-3 sm:pb-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-indigo-100">
         <CardTitle className="flex items-center gap-2">
-          <History className="h-5 w-5 text-indigo-600" />
-          Actividad Reciente
+          <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg shrink-0">
+            <History className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+          </div>
+          <div>
+            <span className="text-base sm:text-lg lg:text-xl">Actividad Reciente</span>
+            <span className="ml-2 text-sm font-normal text-gray-500">
+              ({records.length})
+            </span>
+          </div>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
+      <CardContent className="p-3 sm:p-6">
+        <div className="space-y-2 sm:space-y-3 max-h-[500px] sm:max-h-[600px] overflow-y-auto pr-1">
           {records.map((record) => (
             <div
               key={record.id}
-              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
+              className="group p-3 sm:p-3.5 bg-gradient-to-r from-white to-slate-50 rounded-xl border border-gray-200 hover:shadow-md hover:border-indigo-200 transition-all duration-200"
             >
-              <div className="space-y-1 flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">{record.student.profile.full_name}</p>
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {formatTime(record.check_in)} - {formatTime(record.check_out)}
-                  </span>
-                  <span>📍 {record.room}</span>
+              {/* Mobile: Stack vertically, Desktop: Side by side */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+                {/* Left section: Student info */}
+                <div className="flex-1 min-w-0 space-y-1">
+                  <p className="font-semibold text-sm sm:text-base truncate group-hover:text-indigo-600 transition-colors">
+                    {record.student.profile.full_name}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs text-gray-600">
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3 shrink-0" />
+                      <span className="truncate">
+                        {formatTime(record.check_in)} - {formatTime(record.check_out)}
+                      </span>
+                    </span>
+                    <span className="text-gray-400">•</span>
+                    <span className="truncate">📍 {record.room}</span>
+                  </div>
                 </div>
-              </div>
-              <div className="text-right space-y-1 ml-3">
-                <p className="text-lg font-bold text-indigo-600">{record.hours_worked.toFixed(1)}h</p>
-                <Badge variant="outline" className="text-xs">
-                  {record.shift === "matutino" ? "☀️ Matutino" : "🌙 Vespertino"}
-                </Badge>
+
+                {/* Right section: Hours and badge */}
+                <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 sm:gap-1.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
+                  {/* Hours display */}
+                  <div className="flex items-center gap-2">
+                    <div className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-3 py-1.5 rounded-lg shadow-md">
+                      <p className="text-base sm:text-lg font-bold leading-none">
+                        {record.hours_worked.toFixed(1)}
+                      </p>
+                      <p className="text-[10px] opacity-90">horas</p>
+                    </div>
+                  </div>
+
+                  {/* Shift badge */}
+                  <Badge variant="outline" className="text-xs shrink-0">
+                    {record.shift === "matutino" ? "☀️" : "🌙"}
+                    <span className="hidden sm:inline ml-1">
+                      {record.shift === "matutino" ? "Matutino" : "Vespertino"}
+                    </span>
+                  </Badge>
+                </div>
               </div>
             </div>
           ))}
