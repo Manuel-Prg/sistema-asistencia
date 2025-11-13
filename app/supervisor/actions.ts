@@ -178,3 +178,100 @@ export async function capLongSessions() {
     return { success: false, error: error.message }
   }
 }
+
+// ✅ NUEVA: Ajustar horas manualmente
+export async function adjustStudentHours(
+  studentId: string,
+  hoursAdjustment: number,
+  reason: string
+) {
+  try {
+    const supabase = await getSupabaseServerClient()
+
+    // Verificar que el usuario es supervisor
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    
+    if (!user) {
+      return { success: false, error: "No autenticado" }
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single()
+
+    if (profile?.role !== "supervisor") {
+      return { success: false, error: "No autorizado" }
+    }
+
+    // Obtener las horas actuales del estudiante
+    const { data: student, error: studentError } = await supabase
+      .from("students")
+      .select("accumulated_hours")
+      .eq("id", studentId)
+      .single()
+
+    if (studentError || !student) {
+      console.error("Error al obtener estudiante:", studentError)
+      return { success: false, error: "Estudiante no encontrado" }
+    }
+
+    // Calcular nuevas horas
+    const newHours = Number(student.accumulated_hours) + Number(hoursAdjustment)
+
+    if (newHours < 0) {
+      return {
+        success: false,
+        error: "El ajuste resultaría en horas negativas",
+      }
+    }
+
+    // Actualizar horas del estudiante
+    const { error: updateError } = await supabase
+      .from("students")
+      .update({ accumulated_hours: newHours })
+      .eq("id", studentId)
+
+    if (updateError) {
+      console.error("Error al actualizar horas:", updateError)
+      return { success: false, error: "Error al actualizar horas" }
+    }
+
+    // Obtener el turno actual para el registro
+    const now = new Date()
+    const hour = now.getHours()
+    const shift = hour < 14 ? "morning" : "afternoon"
+
+    // Crear registro de asistencia con el ajuste
+    const { error: recordError } = await supabase
+      .from("attendance_records")
+      .insert({
+        student_id: studentId,
+        check_in: now.toISOString(),
+        check_out: now.toISOString(),
+        shift: shift,
+        room: "Ajuste Manual",
+        hours_worked: Math.abs(hoursAdjustment),
+        early_departure_reason: `AJUSTE MANUAL: ${reason}`,
+      })
+
+    if (recordError) {
+      console.error("Error al crear registro:", recordError)
+      // No retornamos error porque las horas ya se actualizaron correctamente
+    }
+
+    // Revalidar todas las rutas relevantes
+    revalidatePath("/supervisor/manage-hours")
+    revalidatePath("/supervisor/manage-hours/history")
+    revalidatePath("/supervisor/students")
+    revalidatePath("/supervisor")
+
+    return { success: true }
+  } catch (error: any) {
+    console.error("Error en adjustStudentHours:", error)
+    return { success: false, error: "Error al procesar el ajuste" }
+  }
+}

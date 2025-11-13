@@ -27,7 +27,7 @@ export function StudentNav({ userName }: StudentNavProps) {
           {/* Logo and Title Section */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             <Image 
-            src="/logo/iconoFavicon.png" 
+            src="/logo/iconoFavicon0.png" 
             alt="Logo" 
             width={40} 
             height={40}

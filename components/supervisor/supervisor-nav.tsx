@@ -1,7 +1,6 @@
-// components/supervisor/supervisor-nav.tsx
 "use client"
 
-import { ClipboardCheck, LogOut, LayoutDashboard, Users, History, Menu, X } from "lucide-react"
+import { ClipboardCheck, LogOut, LayoutDashboard, Users, History, Menu, X, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "@/app/supervisor/actions"
 import Link from "next/link"
@@ -27,6 +26,7 @@ export function SupervisorNav({ userName }: SupervisorNavProps) {
     { href: "/supervisor", label: "Dashboard", icon: LayoutDashboard },
     { href: "/supervisor/students", label: "Estudiantes", icon: Users },
     { href: "/supervisor/attendance", label: "Asistencias", icon: History },
+    { href: "/supervisor/manage-hours", label: "Gestionar Horas", icon: Clock },
   ]
 
   return (
@@ -55,7 +55,7 @@ export function SupervisorNav({ userName }: SupervisorNavProps) {
           <div className="hidden lg:flex items-center gap-2">
             {navItems.map((item) => {
               const Icon = item.icon
-              const isActive = pathname === item.href
+              const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
               return (
                 <Link key={item.href} href={item.href}>
                   <Button
@@ -97,7 +97,7 @@ export function SupervisorNav({ userName }: SupervisorNavProps) {
             <div className="flex flex-col gap-2">
               {navItems.map((item) => {
                 const Icon = item.icon
-                const isActive = pathname === item.href
+                const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
                 return (
                   <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}>
                     <Button
