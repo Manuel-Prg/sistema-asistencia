@@ -89,49 +89,49 @@ export function AdminCheckoutDialog({ record }: AdminCheckoutDialogProps) {
         </DialogHeader>
 
         {/* Student Info Card */}
-        <div className="p-4 bg-gradient-to-br from-gray-50 to-slate-50 border-2 border-gray-200 rounded-xl space-y-3">
+        <div className="p-4 bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-800 dark:to-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl space-y-3">
           <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-600">Estudiante</p>
-            <p className="text-lg font-bold text-gray-900">
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Estudiante</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-white">
               {record.student.profile.full_name}
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-300">
+          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-300 dark:border-gray-600">
             <div>
-              <p className="text-xs text-gray-500">Entrada</p>
-              <p className="text-sm font-semibold">{checkInFormatted.time}</p>
-              <p className="text-xs text-gray-600">{checkInFormatted.date}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Entrada</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">{checkInFormatted.time}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">{checkInFormatted.date}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500">Turno</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Turno</p>
               <Badge variant="outline" className="mt-1">
                 {record.shift === "matutino" ? "☀️ Matutino" : "🌙 Vespertino"}
               </Badge>
             </div>
           </div>
 
-          <div className="pt-3 border-t border-gray-300">
-            <p className="text-xs text-gray-500">Sala</p>
-            <p className="text-sm font-semibold">📍 {record.room}</p>
+          <div className="pt-3 border-t border-gray-300 dark:border-gray-600">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Sala</p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white">📍 {record.room}</p>
           </div>
 
           {/* Hours Warning */}
           <div className={`p-3 rounded-lg border-2 ${
             willBeCapped 
-              ? 'bg-amber-50 border-amber-300' 
-              : 'bg-blue-50 border-blue-300'
+              ? 'bg-amber-50 dark:bg-amber-950 border-amber-300 dark:border-amber-700' 
+              : 'bg-blue-50 dark:bg-blue-950 border-blue-300 dark:border-blue-700'
           }`}>
             <div className="flex items-center gap-2">
-              <Clock className={`h-4 w-4 ${willBeCapped ? 'text-amber-600' : 'text-blue-600'}`} />
+              <Clock className={`h-4 w-4 ${willBeCapped ? 'text-amber-600 dark:text-amber-400' : 'text-blue-600 dark:text-blue-400'}`} />
               <div className="flex-1">
                 <p className={`text-sm font-semibold ${
-                  willBeCapped ? 'text-amber-900' : 'text-blue-900'
+                  willBeCapped ? 'text-amber-900 dark:text-amber-200' : 'text-blue-900 dark:text-blue-200'
                 }`}>
                   Tiempo transcurrido: {hoursElapsed.toFixed(2)} horas
                 </p>
                 {willBeCapped && (
-                  <p className="text-xs text-amber-700 mt-1">
+                  <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
                     ⚠️ Se registrarán máximo 10 horas (límite diario)
                   </p>
                 )}
@@ -150,7 +150,7 @@ export function AdminCheckoutDialog({ record }: AdminCheckoutDialogProps) {
             onChange={(e) => setReason(e.target.value)}
             maxLength={200}
           />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             {reason.length}/200 caracteres
           </p>
         </div>

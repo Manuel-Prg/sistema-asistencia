@@ -1,4 +1,3 @@
-// app/supervisor/students/page.tsx
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { StudentsTable } from "@/components/supervisor/students-table"
 import { SyncHoursButton } from "@/components/supervisor/sync-hours-button"
@@ -21,7 +20,7 @@ export default async function StudentsPage() {
     .order("profile(full_name)")
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="space-y-6 p-4 sm:p-6 lg:p-8">
         {/* Header with gradient background */}
         <div className="relative">
@@ -31,7 +30,7 @@ export default async function StudentsPage() {
               <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 Estudiantes
               </h2>
-              <p className="text-sm sm:text-base text-gray-600 mt-2 font-medium">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-2 font-medium">
                 Lista completa de estudiantes y su progreso
               </p>
             </div>

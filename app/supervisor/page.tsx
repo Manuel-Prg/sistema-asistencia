@@ -1,10 +1,8 @@
-// app/supervisor/page.tsx
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { StatsCards } from "@/components/supervisor/stats-cards"
 import { ActiveStudents } from "@/components/supervisor/active-students"
 import { RecentActivity } from "@/components/supervisor/recent-activity"
 
-// ✅ CRÍTICO: Deshabilitar caché completamente
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 export const fetchCache = 'force-no-store'
@@ -49,7 +47,7 @@ export default async function SupervisorDashboard() {
     }, 0) / (totalStudents || 1) || 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8">
         {/* Hero Header */}
         <div className="relative">
@@ -58,7 +56,7 @@ export default async function SupervisorDashboard() {
             <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Dashboard
             </h2>
-            <p className="text-sm sm:text-base text-gray-600 mt-2 font-medium">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-2 font-medium">
               Vista general del sistema de asistencia
             </p>
           </div>

@@ -49,15 +49,16 @@ export function EarlyDepartureDialog({ open, onOpenChange, hoursWorked, onConfir
   }
 
   const isValid = selectedReason && (selectedReason !== "otra" || otherReason.trim())
-  const remainingHours = Math.max(4 - hoursWorked, 0)
+  // ✅ CAMBIO: Ahora son 3 horas mínimas en lugar de 4
+  const remainingHours = Math.max(3 - hoursWorked, 0)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="space-y-3">
           <div className="flex items-start gap-3">
-            <div className="p-2.5 bg-amber-100 rounded-lg">
-              <AlertCircle className="h-6 w-6 text-amber-600" />
+            <div className="p-2.5 bg-amber-100 dark:bg-amber-950 rounded-lg">
+              <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
             </div>
             <div className="flex-1 space-y-1">
               <DialogTitle className="text-xl sm:text-2xl text-left">
@@ -70,28 +71,28 @@ export function EarlyDepartureDialog({ open, onOpenChange, hoursWorked, onConfir
           </div>
 
           {/* Hours Summary Card */}
-          <div className="p-4 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl">
+          <div className="p-4 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-2 border-amber-200 dark:border-amber-800 rounded-xl">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-xs sm:text-sm text-amber-800 font-medium">Horas trabajadas</p>
-                <p className="text-2xl sm:text-3xl font-bold text-amber-900">
+                <p className="text-xs sm:text-sm text-amber-800 dark:text-amber-300 font-medium">Horas trabajadas</p>
+                <p className="text-2xl sm:text-3xl font-bold text-amber-900 dark:text-amber-200">
                   {hoursWorked.toFixed(2)}
-                  <span className="text-base text-amber-600 font-normal ml-1">hrs</span>
+                  <span className="text-base text-amber-600 dark:text-amber-400 font-normal ml-1">hrs</span>
                 </p>
               </div>
               <div className="text-right space-y-1">
-                <p className="text-xs sm:text-sm text-amber-800 font-medium">Horas faltantes</p>
-                <p className="text-2xl sm:text-3xl font-bold text-orange-600">
+                <p className="text-xs sm:text-sm text-amber-800 dark:text-amber-300 font-medium">Horas faltantes</p>
+                <p className="text-2xl sm:text-3xl font-bold text-orange-600 dark:text-orange-400">
                   {remainingHours.toFixed(2)}
-                  <span className="text-base text-orange-500 font-normal ml-1">hrs</span>
+                  <span className="text-base text-orange-500 dark:text-orange-400 font-normal ml-1">hrs</span>
                 </p>
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-amber-300">
-              <div className="flex items-center gap-2 text-amber-800">
+            <div className="mt-3 pt-3 border-t border-amber-300 dark:border-amber-700">
+              <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300">
                 <Clock className="h-4 w-4" />
                 <p className="text-xs sm:text-sm">
-                  Se requieren 4 horas mínimas por turno
+                  Se requieren 3 horas mínimas por turno
                 </p>
               </div>
             </div>
@@ -105,10 +106,10 @@ export function EarlyDepartureDialog({ open, onOpenChange, hoursWorked, onConfir
               {REASONS.map((reason) => (
                 <div key={reason.value} className="relative">
                   <div 
-                    className={`flex items-center space-x-3 p-3 sm:p-4 rounded-lg border-2 transition-all cursor-pointer hover:bg-gray-50 ${
+                    className={`flex items-center space-x-3 p-3 sm:p-4 rounded-lg border-2 transition-all cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
                       selectedReason === reason.value 
-                        ? 'border-indigo-500 bg-indigo-50' 
-                        : 'border-gray-200'
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30' 
+                        : 'border-gray-200 dark:border-gray-700'
                     }`}
                     onClick={() => setSelectedReason(reason.value)}
                   >
@@ -140,7 +141,7 @@ export function EarlyDepartureDialog({ open, onOpenChange, hoursWorked, onConfir
                 className="resize-none text-sm sm:text-base"
                 maxLength={200}
               />
-              <p className="text-xs text-gray-500 text-right">
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-right">
                 {otherReason.length}/200 caracteres
               </p>
             </div>

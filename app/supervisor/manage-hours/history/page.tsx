@@ -1,4 +1,3 @@
-// app/supervisor/manage-hours/history/page.tsx
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -32,12 +31,12 @@ export default async function AdjustmentsHistoryPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <History className="h-8 w-8 text-indigo-600" />
-            <h2 className="text-3xl font-bold text-gray-900">
+            <History className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
               Historial de Ajustes
             </h2>
           </div>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             Registro de todos los ajustes manuales realizados
           </p>
         </div>
@@ -49,18 +48,18 @@ export default async function AdjustmentsHistoryPage() {
         </Link>
       </div>
 
-      <Card>
+      <Card className="dark:bg-gray-900 dark:border-gray-800">
         <CardHeader>
           <CardTitle>Ajustes Realizados ({adjustments?.length || 0})</CardTitle>
         </CardHeader>
         <CardContent>
           {!adjustments || adjustments.length === 0 ? (
             <div className="text-center py-12">
-              <History className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 font-medium">
+              <History className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-500 dark:text-gray-400 font-medium">
                 No hay ajustes registrados
               </p>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
                 Los ajustes manuales aparecerán aquí
               </p>
             </div>
@@ -69,25 +68,25 @@ export default async function AdjustmentsHistoryPage() {
               {adjustments.map((adjustment) => (
                 <div
                   key={adjustment.id}
-                  className="p-4 bg-gray-50 rounded-lg border border-gray-200"
+                  className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-semibold text-gray-900">
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
                           {adjustment.student.profile.full_name}
                         </h3>
-                        <Badge variant="secondary">
+                        <Badge variant="secondary" className="dark:bg-gray-700">
                           +{adjustment.hours_worked?.toFixed(1)}h
                         </Badge>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                         {adjustment.early_departure_reason?.replace(
                           "AJUSTE MANUAL: ",
                           ""
                         )}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         Registrado el {formatDateTime(adjustment.created_at)}
                       </p>
                     </div>

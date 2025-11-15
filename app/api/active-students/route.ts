@@ -20,7 +20,7 @@ export async function GET() {
       { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
-    // ✅ CORREGIDO: No filtrar por fecha, solo buscar check_out = null
+    // No filtrar por fecha, solo buscar check_out = null
     // Esto encontrará TODOS los registros activos sin importar cuándo hicieron check-in
     const { data, error } = await supabaseAdmin
       .from("attendance_records")

@@ -46,16 +46,16 @@ export default async function StudentDashboard() {
     .limit(10)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-6 sm:py-8 max-w-7xl">
         <div className="space-y-6 sm:space-y-8">
           {/* Header Section - Mobile Optimized */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white tracking-tight">
                 Panel de Control
               </h1>
-              <p className="text-sm sm:text-base text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
                 Gestiona tu asistencia y visualiza tu progreso
               </p>
             </div>

@@ -122,7 +122,7 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
 
   return (
     <>
-      <Card>
+      <Card className="dark:bg-gray-900 dark:border-gray-800">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Estudiantes ({filteredStudents.length})</CardTitle>
@@ -134,7 +134,7 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
             </Link>
           </div>
           <div className="relative mt-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <Input
               placeholder="Buscar por nombre..."
               value={searchTerm}
@@ -146,9 +146,9 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
         <CardContent>
           {filteredStudents.length === 0 ? (
             <div className="text-center py-12">
-              <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 font-medium">No se encontraron estudiantes</p>
-              <p className="text-sm text-gray-400 mt-1">
+              <Search className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-500 dark:text-gray-400 font-medium">No se encontraron estudiantes</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
                 Intenta con otro término de búsqueda
               </p>
             </div>
@@ -157,17 +157,17 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
               {filteredStudents.map((student) => (
                 <div
                   key={student.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-gray-900 truncate">
+                      <h3 className="font-semibold text-gray-900 dark:text-white truncate">
                         {student.profile.full_name}
                       </h3>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       Horas acumuladas:{" "}
-                      <span className="font-semibold text-indigo-600">
+                      <span className="font-semibold text-indigo-600 dark:text-indigo-400">
                         {student.accumulated_hours.toFixed(1)}h
                       </span>
                     </p>
@@ -176,7 +176,7 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="gap-2 text-green-600 hover:text-green-700 hover:bg-green-50 border-green-200"
+                      className="gap-2 text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-950 border-green-200 dark:border-green-800"
                       onClick={() => handleOpenDialog(student, "add")}
                     >
                       <Plus className="h-4 w-4" />
@@ -185,7 +185,7 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                      className="gap-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950 border-red-200 dark:border-red-800"
                       onClick={() => handleOpenDialog(student, "subtract")}
                       disabled={student.accumulated_hours <= 0}
                     >
@@ -209,13 +209,13 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
             <DialogDescription>
               {selectedStudent && (
                 <>
-                  <span className="font-semibold text-gray-900">
+                  <span className="font-semibold text-gray-900 dark:text-white">
                     {selectedStudent.profile.full_name}
                   </span>
                   <br />
                   <span className="text-sm">
                     Horas actuales:{" "}
-                    <span className="font-semibold text-indigo-600">
+                    <span className="font-semibold text-indigo-600 dark:text-indigo-400">
                       {selectedStudent.accumulated_hours.toFixed(1)}h
                     </span>
                   </span>
@@ -260,16 +260,16 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
                 rows={4}
                 className="resize-none"
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 {reason.length}/10 caracteres mínimo
               </p>
             </div>
 
             {hours && !isNaN(parseFloat(hours)) && parseFloat(hours) > 0 && (
-              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-sm text-gray-600">
+              <div className="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Horas después del ajuste:{" "}
-                  <span className="font-semibold text-indigo-600">
+                  <span className="font-semibold text-indigo-600 dark:text-indigo-400">
                     {selectedStudent &&
                       (
                         selectedStudent.accumulated_hours +
@@ -295,8 +295,8 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
               disabled={isSubmitting}
               className={
                 adjustmentType === "add"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : "bg-red-600 hover:bg-red-700"
+                  ? "bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700"
+                  : "bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
               }
             >
               {isSubmitting ? "Procesando..." : "Confirmar Ajuste"}

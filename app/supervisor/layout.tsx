@@ -4,6 +4,7 @@ import { Toaster } from "sonner"
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { SupervisorNav } from "@/components/supervisor/supervisor-nav"
+import { Footer } from "@/components/ui/footer"
 
 export default async function SupervisorLayout({
   children,
@@ -31,14 +32,16 @@ export default async function SupervisorLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <SupervisorNav userName={profile.full_name} />
       <main className="container mx-auto px-4 py-6">{children}</main>
+      <Footer />
       <Toaster 
-      position="top-right"
-       richColors
-       closeButton
-       duration={4000} />
+        position="top-right"
+        richColors
+        closeButton
+        duration={4000} 
+      />
     </div>
   )
 }

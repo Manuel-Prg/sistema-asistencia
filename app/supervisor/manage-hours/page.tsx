@@ -1,4 +1,3 @@
-// app/supervisor/manage-hours/page.tsx
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { ManageHoursTable } from "@/components/supervisor/manage-hours-table"
 import { Button } from "@/components/ui/button"
@@ -17,19 +16,19 @@ export default async function ManageHoursPage() {
     <div className="space-y-6">
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <Clock className="h-8 w-8 text-indigo-600" />
-          <h2 className="text-3xl font-bold text-gray-900">Gestionar Horas</h2>
+          <Clock className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Gestionar Horas</h2>
         </div>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Ajusta las horas acumuladas de los estudiantes manualmente
         </p>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-900 rounded-lg p-4">
         <div className="flex gap-3">
           <div className="flex-shrink-0">
             <svg
-              className="h-5 w-5 text-blue-600"
+              className="h-5 w-5 text-blue-600 dark:text-blue-400"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -41,10 +40,10 @@ export default async function ManageHoursPage() {
             </svg>
           </div>
           <div>
-            <h3 className="text-sm font-medium text-blue-900">
+            <h3 className="text-sm font-medium text-blue-900 dark:text-blue-200">
               ¿Cuándo usar esta función?
             </h3>
-            <div className="mt-2 text-sm text-blue-700">
+            <div className="mt-2 text-sm text-blue-700 dark:text-blue-300">
               <ul className="list-disc list-inside space-y-1">
                 <li>Para registrar horas trabajadas antes de implementar el sistema</li>
                 <li>Para corregir errores en registros anteriores</li>
