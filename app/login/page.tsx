@@ -1,6 +1,4 @@
-// ============================================
-// ARCHIVO: app/login/page.tsx (CORREGIDO)
-// ============================================
+// app/login/page.tsx
 "use client"
 
 import type React from "react"
@@ -33,48 +31,45 @@ export default function LoginPage() {
   const router = useRouter()
   const supabase = getSupabaseBrowserClient()
 
-  // Cargar estudiantes activos al montar el componente
   useEffect(() => {
     fetchActiveStudents()
+    
+    // Refresh cada 30 segundos
+    const interval = setInterval(() => {
+      fetchActiveStudents()
+    }, 30000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   const fetchActiveStudents = async () => {
     try {
       setLoadingStudents(true)
-      console.log("🔍 Fetching active students...")
       
       const response = await fetch("/api/active-students", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json",
         },
         cache: "no-store",
       })
 
-      console.log("📡 Response status:", response.status)
-      console.log("📡 Response headers:", Object.fromEntries(response.headers.entries()))
-
-      const text = await response.text()
-      console.log("📄 Response text:", text)
-
-      let data
-      try {
-        data = JSON.parse(text)
-        console.log("✅ Parsed data:", data)
-      } catch (parseError) {
-        console.error("❌ Failed to parse JSON:", parseError)
-        console.error("📄 Raw response:", text)
+      const contentType = response.headers.get("content-type")
+      if (!contentType || !contentType.includes("application/json")) {
+        setActiveStudents([])
         return
       }
 
+      const data = await response.json()
+
       if (response.ok) {
-        console.log(`✅ Found ${data.activeStudents?.length || 0} active students`)
         setActiveStudents(data.activeStudents || [])
       } else {
-        console.error("❌ Error fetching active students:", data.error)
+        setActiveStudents([])
       }
     } catch (err) {
-      console.error("❌ Failed to fetch active students:", err)
+      setActiveStudents([])
     } finally {
       setLoadingStudents(false)
     }
@@ -95,11 +90,9 @@ export default function LoginPage() {
         throw authError
       }
 
-      console.log("Login successful, redirecting...")
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      window.location.href = "/"
+      router.push("/")
+      router.refresh()
     } catch (err: any) {
-      console.error("Login error:", err)
       setError(err.message || "Error al iniciar sesión")
       setLoading(false)
     }

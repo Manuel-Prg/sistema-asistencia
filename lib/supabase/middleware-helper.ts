@@ -19,11 +19,15 @@ export function getSupabaseMiddlewareClient() {
 }
 
 /**
+ * Logger condicional - solo en desarrollo
+ */
+const isDev = process.env.NODE_ENV === 'development'
+const logError = isDev ? console.error : () => {}
+
+/**
  * Obtiene el rol de un usuario de forma segura en el middleware
  */
 export async function getUserRole(userId: string): Promise<'student' | 'supervisor' | null> {
-  console.log('[MIDDLEWARE HELPER] Getting role for user:', userId)
-  
   try {
     const supabase = getSupabaseMiddlewareClient()
     
@@ -34,19 +38,18 @@ export async function getUserRole(userId: string): Promise<'student' | 'supervis
       .single()
 
     if (error) {
-      console.error('[MIDDLEWARE HELPER] Error fetching user role:', error)
+      logError('[MIDDLEWARE HELPER] Error fetching user role:', error)
       return null
     }
     
     if (!data) {
-      console.error('[MIDDLEWARE HELPER] No profile found for user:', userId)
+      logError('[MIDDLEWARE HELPER] No profile found for user:', userId)
       return null
     }
-
-    console.log('[MIDDLEWARE HELPER] Role found:', data.role)
+    
     return data.role as 'student' | 'supervisor'
   } catch (error) {
-    console.error('[MIDDLEWARE HELPER] Exception fetching user role:', error)
+    logError('[MIDDLEWARE HELPER] Exception fetching user role:', error)
     return null
   }
 }

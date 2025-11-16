@@ -6,11 +6,8 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export async function GET() {
-  console.log("🔵 API route /api/active-students called")
-  
   try {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      console.error("❌ Missing environment variables")
       return NextResponse.json({ error: "Config error", activeStudents: [] })
     }
 
@@ -20,8 +17,6 @@ export async function GET() {
       { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
-    // No filtrar por fecha, solo buscar check_out = null
-    // Esto encontrará TODOS los registros activos sin importar cuándo hicieron check-in
     const { data, error } = await supabaseAdmin
       .from("attendance_records")
       .select(`
@@ -37,11 +32,8 @@ export async function GET() {
       .order("check_in", { ascending: false })
 
     if (error) {
-      console.error("❌ Supabase error:", error)
       return NextResponse.json({ error: error.message, activeStudents: [] })
     }
-
-    console.log("📊 Raw data from Supabase:", JSON.stringify(data, null, 2))
 
     const formatted = data?.map((r: any) => ({
       id: r.id,
@@ -50,8 +42,6 @@ export async function GET() {
       shift: r.shift,
       room: r.room,
     })) || []
-
-    console.log(`✅ Found ${formatted.length} active students:`, formatted)
     
     return NextResponse.json({ activeStudents: formatted }, {
       headers: {
@@ -61,7 +51,6 @@ export async function GET() {
       }
     })
   } catch (error: any) {
-    console.error("❌ Unexpected error:", error)
     return NextResponse.json({ 
       error: error.message || "Server error", 
       activeStudents: [] 
