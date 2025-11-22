@@ -48,7 +48,7 @@ export async function forceCheckOut(recordId: string, reason: string) {
     const checkInTime = new Date(record.check_in)
     const checkOutTime = new Date()
     const hoursWorked = (checkOutTime.getTime() - checkInTime.getTime()) / (1000 * 60 * 60)
-    
+
     // ✅ LÍMITE: Máximo 10 horas por día
     const cappedHours = Math.min(hoursWorked, 10)
 
@@ -68,9 +68,9 @@ export async function forceCheckOut(recordId: string, reason: string) {
 
     // El trigger se encargará de actualizar accumulated_hours automáticamente
     revalidatePath("/supervisor")
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       hoursWorked: cappedHours,
       wasCapped: hoursWorked > 10
     }
@@ -118,9 +118,9 @@ export async function autoCloseOldRecords() {
     }
 
     revalidatePath("/supervisor")
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       closed: oldRecords.length,
       message: `Se cerraron ${oldRecords.length} registros antiguos`
     }
@@ -168,9 +168,9 @@ export async function capLongSessions() {
     }
 
     revalidatePath("/supervisor")
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       capped: longRecords.length,
       message: `Se limitaron ${longRecords.length} sesiones a 10 horas`
     }
@@ -192,7 +192,7 @@ export async function adjustStudentHours(
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    
+
     if (!user) {
       return { success: false, error: "No autenticado" }
     }
@@ -243,9 +243,10 @@ export async function adjustStudentHours(
     // Obtener el turno actual para el registro
     const now = new Date()
     const hour = now.getHours()
-    const shift = hour < 14 ? "morning" : "afternoon"
+    const shift = hour < 14 ? "matutino" : "vespertino"
 
     // Crear registro de asistencia con el ajuste
+    const adjustmentType = hoursAdjustment > 0 ? "SUMA" : "RESTA"
     const { error: recordError } = await supabase
       .from("attendance_records")
       .insert({
@@ -255,7 +256,7 @@ export async function adjustStudentHours(
         shift: shift,
         room: "Ajuste Manual",
         hours_worked: Math.abs(hoursAdjustment),
-        early_departure_reason: `AJUSTE MANUAL: ${reason}`,
+        early_departure_reason: `${adjustmentType}: ${reason}`,
       })
 
     if (recordError) {

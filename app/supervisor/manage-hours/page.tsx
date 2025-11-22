@@ -53,16 +53,6 @@ export default async function ManageHoursPage() {
           </div>
         </div>
       </div>
-
-      <div className="flex justify-end">
-        <Link href="/supervisor/manage-hours/history">
-          <Button variant="outline" className="gap-2">
-            <History className="h-4 w-4" />
-            Ver Historial
-          </Button>
-        </Link>
-      </div>
-
       <ManageHoursTable students={students || []} />
     </div>
   )

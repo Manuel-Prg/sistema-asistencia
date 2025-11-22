@@ -39,6 +39,7 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
   const [reason, setReason] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
 
   const filteredStudents = students.filter((student) => {
     const searchLower = searchTerm.toLowerCase()
@@ -51,6 +52,7 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
     setHours("")
     setReason("")
     setError("")
+    setSuccessMessage("")
   }
 
   const handleCloseDialog = () => {
@@ -58,6 +60,7 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
     setHours("")
     setReason("")
     setError("")
+    setSuccessMessage("")
   }
 
   const handleSubmit = async () => {
@@ -97,10 +100,13 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
 
     setIsSubmitting(true)
     setError("")
+    setSuccessMessage("")
 
     try {
       const hoursToAdjust = adjustmentType === "subtract" ? -hoursNum : hoursNum
-      
+
+      console.log(`📤 Submitting adjustment: ${adjustmentType === "add" ? "+" : ""}${hoursToAdjust}h for ${selectedStudent.profile.full_name}`)
+
       const result = await adjustStudentHours(
         selectedStudent.id,
         hoursToAdjust,
@@ -108,13 +114,20 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
       )
 
       if (result.success) {
-        handleCloseDialog()
-        window.location.reload() // Recargar para ver los cambios
+        console.log('✅ Adjustment successful, reloading page...')
+        setSuccessMessage("✅ Ajuste realizado correctamente. Recargando datos...")
+
+        // Esperar 2 segundos para asegurar que se guardó
+        setTimeout(() => {
+          window.location.reload()
+        }, 2000)
       } else {
+        console.error('❌ Adjustment failed:', result.error)
         setError(result.error || "Error al realizar el ajuste")
       }
-    } catch (err) {
-      setError("Error al procesar la solicitud")
+    } catch (err: any) {
+      console.error('❌ Adjustment exception:', err)
+      setError(`Error: ${err.message || "Error al procesar la solicitud"}`)
     } finally {
       setIsSubmitting(false)
     }
@@ -229,6 +242,13 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {successMessage && (
+              <Alert className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{successMessage}</AlertDescription>
               </Alert>
             )}
 
