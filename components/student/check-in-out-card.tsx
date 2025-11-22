@@ -25,10 +25,8 @@ import { checkIn, checkOut } from "@/app/student/actions";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { EarlyDepartureDialog } from "./early-departure-dialog";
+import type { CheckInOutCardProps } from "@/lib/types/student";
 
-interface CheckInOutCardProps {
-  activeRecord: any;
-}
 
 const ROOMS = [
   "Sala 1",

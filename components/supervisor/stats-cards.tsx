@@ -1,12 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, UserCheck, Clock, TrendingUp } from "lucide-react"
-
-interface StatsCardsProps {
-  totalStudents: number
-  activeNow: number
-  totalHoursToday: number
-  avgProgress: number
-}
+import type { StatsCardsProps } from "@/lib/types/supervisor"
 
 export function StatsCards({ totalStudents, activeNow, totalHoursToday, avgProgress }: StatsCardsProps) {
   const stats = [

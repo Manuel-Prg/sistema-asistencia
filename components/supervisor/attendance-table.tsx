@@ -3,25 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Clock } from "lucide-react"
 import { formatDateTime } from "@/lib/utils/date-formatter"
-
-interface AttendanceRecord {
-  id: string
-  check_in: string
-  check_out: string | null
-  room: string
-  shift: string
-  hours_worked: number | null
-  early_departure_reason: string | null
-  student: {
-    profile: {
-      full_name: string
-    }
-  }
-}
-
-interface AttendanceTableProps {
-  records: AttendanceRecord[]
-}
+import type { AttendanceRecord, AttendanceTableProps } from "@/lib/types/supervisor"
 
 export function AttendanceTable({ records }: AttendanceTableProps) {
   const getShiftBadge = (shift: string) => {
@@ -98,7 +80,7 @@ export function AttendanceTable({ records }: AttendanceTableProps) {
                       <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg shrink-0">
                         {record.student.profile.full_name.charAt(0)}
                       </div>
-                      
+
                       {/* Student Info */}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-base sm:text-lg text-gray-800 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -139,9 +121,8 @@ export function AttendanceTable({ records }: AttendanceTableProps) {
 
                     {/* Check Out */}
                     <div className="flex items-start gap-2">
-                      <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${
-                        checkOut ? 'bg-red-100 dark:bg-red-950' : 'bg-gray-100 dark:bg-gray-800'
-                      }`}>
+                      <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${checkOut ? 'bg-red-100 dark:bg-red-950' : 'bg-gray-100 dark:bg-gray-800'
+                        }`}>
                         <svg className={`h-4 w-4 ${checkOut ? 'text-red-600 dark:text-red-400' : 'text-gray-400 dark:text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>

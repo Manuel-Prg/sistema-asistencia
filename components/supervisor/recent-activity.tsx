@@ -3,10 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { History, Clock } from "lucide-react"
 import { formatTime } from "@/lib/utils/date-formatter"
-
-interface RecentActivityProps {
-  records: any[]
-}
+import type { RecentActivityProps } from "@/lib/types/supervisor"
 
 export function RecentActivity({ records }: RecentActivityProps) {
   if (records.length === 0) {

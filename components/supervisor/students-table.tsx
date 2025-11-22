@@ -2,22 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Users } from "lucide-react"
-
-interface Student {
-  id: string
-  student_type: string
-  required_hours: number
-  accumulated_hours: number
-  assigned_room: string | null
-  profile: {
-    full_name: string
-    email: string
-  }
-}
-
-interface StudentsTableProps {
-  students: Student[]
-}
+import type { Student, StudentsTableProps } from "@/lib/types/supervisor"
 
 export function StudentsTable({ students }: StudentsTableProps) {
   const getShiftLabel = (type: string) => {
@@ -84,7 +69,7 @@ export function StudentsTable({ students }: StudentsTableProps) {
                           {student.profile.email}
                         </p>
                       </div>
-                      
+
                       {/* Badges - Responsive */}
                       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         <Badge variant="outline" className="text-xs dark:border-gray-600 dark:text-gray-300">
@@ -121,13 +106,13 @@ export function StudentsTable({ students }: StudentsTableProps) {
                       <span className="text-gray-600 dark:text-gray-400 font-medium">Progreso</span>
                       <span className="font-bold text-indigo-600 dark:text-indigo-400">{progress.toFixed(1)}%</span>
                     </div>
-                    
+
                     {/* Progress bar */}
-                    <Progress 
-                      value={progress} 
+                    <Progress
+                      value={progress}
                       className="h-2 sm:h-2.5"
                     />
-                    
+
                     {/* Remaining hours */}
                     <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                       <span>Faltan {remaining.toFixed(1)} horas</span>

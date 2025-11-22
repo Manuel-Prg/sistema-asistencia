@@ -15,13 +15,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { AlertCircle, Clock } from "lucide-react"
-
-interface EarlyDepartureDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  hoursWorked: number
-  onConfirm: (reason: string) => void
-}
+import type { EarlyDepartureDialogProps } from "@/lib/types/student"
 
 const REASONS = [
   { value: "enfermedad", label: "Enfermedad", emoji: "🤒" },
@@ -105,17 +99,16 @@ export function EarlyDepartureDialog({ open, onOpenChange, hoursWorked, onConfir
             <RadioGroup value={selectedReason} onValueChange={setSelectedReason} className="space-y-2">
               {REASONS.map((reason) => (
                 <div key={reason.value} className="relative">
-                  <div 
-                    className={`flex items-center space-x-3 p-3 sm:p-4 rounded-lg border-2 transition-all cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                      selectedReason === reason.value 
-                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30' 
+                  <div
+                    className={`flex items-center space-x-3 p-3 sm:p-4 rounded-lg border-2 transition-all cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${selectedReason === reason.value
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30'
                         : 'border-gray-200 dark:border-gray-700'
-                    }`}
+                      }`}
                     onClick={() => setSelectedReason(reason.value)}
                   >
                     <RadioGroupItem value={reason.value} id={reason.value} className="mt-0.5" />
-                    <Label 
-                      htmlFor={reason.value} 
+                    <Label
+                      htmlFor={reason.value}
                       className="flex items-center gap-2 cursor-pointer font-normal flex-1 text-sm sm:text-base"
                     >
                       <span className="text-xl sm:text-2xl">{reason.emoji}</span>
@@ -149,16 +142,16 @@ export function EarlyDepartureDialog({ open, onOpenChange, hoursWorked, onConfir
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0 flex-col sm:flex-row">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => onOpenChange(false)}
             className="w-full sm:w-auto order-2 sm:order-1"
             disabled={loading}
           >
             Cancelar
           </Button>
-          <Button 
-            onClick={handleConfirm} 
+          <Button
+            onClick={handleConfirm}
             disabled={!isValid || loading}
             className="w-full sm:w-auto order-1 sm:order-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
           >

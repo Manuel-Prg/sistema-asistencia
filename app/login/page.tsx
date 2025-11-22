@@ -12,14 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ClipboardCheck, Users, Clock } from "lucide-react"
-
-interface ActiveStudent {
-  id: string
-  studentName: string
-  checkIn: string
-  shift: string
-  room: string
-}
+import type { ActiveStudent } from "@/lib/types/app"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -33,19 +26,19 @@ export default function LoginPage() {
 
   useEffect(() => {
     fetchActiveStudents()
-    
+
     // Refresh cada 30 segundos
     const interval = setInterval(() => {
       fetchActiveStudents()
     }, 30000)
-    
+
     return () => clearInterval(interval)
   }, [])
 
   const fetchActiveStudents = async () => {
     try {
       setLoadingStudents(true)
-      
+
       const response = await fetch("/api/active-students", {
         method: "GET",
         headers: {
@@ -265,7 +258,7 @@ export default function LoginPage() {
       <footer className="w-full bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-            © {new Date().getFullYear()} Casa Universitaria del Agua, Sistema de Asistencia. Todos los derechos reservados. 
+            © {new Date().getFullYear()} Casa Universitaria del Agua, Sistema de Asistencia. Todos los derechos reservados.
           </p>
         </div>
       </footer>

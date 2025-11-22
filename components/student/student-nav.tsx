@@ -6,10 +6,8 @@ import { Button } from "@/components/ui/button"
 import { signOut } from "@/app/student/actions"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useState } from "react"
+import type { StudentNavProps } from "@/lib/types/student"
 
-interface StudentNavProps {
-  userName: string
-}
 
 export function StudentNav({ userName }: StudentNavProps) {
   const [loading, setLoading] = useState(false)
@@ -26,10 +24,10 @@ export function StudentNav({ userName }: StudentNavProps) {
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo and Title Section */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-            <Image 
-              src="/logo/iconoFavicon.png" 
-              alt="Logo" 
-              width={40} 
+            <Image
+              src="/logo/iconoFavicon.png"
+              alt="Logo"
+              width={40}
               height={40}
             />
             <div className="min-w-0 flex-1">
@@ -48,9 +46,9 @@ export function StudentNav({ userName }: StudentNavProps) {
           {/* Actions - Theme Toggle & Logout */}
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 ml-2">
             <ThemeToggle />
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleSignOut}
               disabled={loading}
               className="gap-1.5 sm:gap-2 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400 transition-colors"

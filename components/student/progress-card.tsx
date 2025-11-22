@@ -1,12 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Clock, Award, Target, TrendingUp } from "lucide-react"
+import type { ProgressCardProps } from "@/lib/types/student"
 
-interface ProgressCardProps {
-  accumulatedHours: number
-  requiredHours: number
-  studentType: "servicio_social" | "practicas"
-}
 
 export function ProgressCard({ accumulatedHours, requiredHours, studentType }: ProgressCardProps) {
   const percentage = Math.min((accumulatedHours / requiredHours) * 100, 100)
@@ -37,12 +33,12 @@ export function ProgressCard({ accumulatedHours, requiredHours, studentType }: P
               </span>
             </div>
           </div>
-          
+
           {/* Progress Bar with Gradient */}
           <div className="relative">
-            <Progress 
-              value={percentage} 
-              className="h-3 sm:h-4 bg-gray-100 dark:bg-gray-800" 
+            <Progress
+              value={percentage}
+              className="h-3 sm:h-4 bg-gray-100 dark:bg-gray-800"
             />
             {isComplete && (
               <div className="absolute -top-1 -right-1 animate-bounce">
@@ -52,7 +48,7 @@ export function ProgressCard({ accumulatedHours, requiredHours, studentType }: P
               </div>
             )}
           </div>
-          
+
           <div className="flex items-center justify-between text-xs sm:text-sm">
             <span className="text-gray-500 dark:text-gray-400">{percentage.toFixed(1)}% completado</span>
             {isComplete ? (

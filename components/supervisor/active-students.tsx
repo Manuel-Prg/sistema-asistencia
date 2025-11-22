@@ -4,10 +4,7 @@ import { UserCheck, Clock, AlertTriangle } from "lucide-react"
 import { formatTime } from "@/lib/utils/date-formatter"
 import { AdminCheckoutDialog } from "./admin-checkout-dialog"
 import { AutoCloseButton } from "./auto-close-button"
-
-interface ActiveStudentsProps {
-  records: any[]
-}
+import type { ActiveStudentsProps } from "@/lib/types/supervisor"
 
 export function ActiveStudents({ records }: ActiveStudentsProps) {
   // Calcular estadísticas
@@ -69,10 +66,10 @@ export function ActiveStudents({ records }: ActiveStudentsProps) {
               </span>
             </div>
           </CardTitle>
-          
+
           {/* Auto-close buttons */}
           <div className="shrink-0">
-            <AutoCloseButton 
+            <AutoCloseButton
               longSessions={longSessions.length}
               oldRecords={oldRecords.length}
             />
@@ -113,13 +110,12 @@ export function ActiveStudents({ records }: ActiveStudentsProps) {
             return (
               <div
                 key={record.id}
-                className={`p-3 sm:p-4 rounded-xl border-2 transition-all ${
-                  isVeryOld
+                className={`p-3 sm:p-4 rounded-xl border-2 transition-all ${isVeryOld
                     ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800'
                     : isLongSession
-                    ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800'
-                    : 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
-                }`}
+                      ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800'
+                      : 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
+                  }`}
               >
                 {/* Header section */}
                 <div className="flex items-start justify-between gap-2 mb-3">
@@ -135,16 +131,15 @@ export function ActiveStudents({ records }: ActiveStudentsProps) {
                       <span className="text-xs text-gray-500 dark:text-gray-400">📍 {record.room}</span>
                     </div>
                   </div>
-                  
-                  <Badge 
-                    variant="outline" 
-                    className={`shrink-0 text-xs ${
-                      isVeryOld
+
+                  <Badge
+                    variant="outline"
+                    className={`shrink-0 text-xs ${isVeryOld
                         ? 'bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700'
                         : isLongSession
-                        ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                        : 'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700'
-                    }`}
+                          ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700'
+                          : 'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700'
+                      }`}
                   >
                     {record.shift === "matutino" ? "☀️" : "🌙"}
                     <span className="hidden sm:inline ml-1">
@@ -154,28 +149,25 @@ export function ActiveStudents({ records }: ActiveStudentsProps) {
                 </div>
 
                 {/* Hours indicator - Responsive layout */}
-                <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-lg ${
-                  isVeryOld
+                <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-lg ${isVeryOld
                     ? 'bg-red-100 dark:bg-red-950/50'
                     : isLongSession
-                    ? 'bg-amber-100 dark:bg-amber-950/50'
-                    : 'bg-green-100 dark:bg-green-950/50'
-                }`}>
+                      ? 'bg-amber-100 dark:bg-amber-950/50'
+                      : 'bg-green-100 dark:bg-green-950/50'
+                  }`}>
                   <div className="flex items-center gap-2">
-                    <Clock className={`h-4 w-4 shrink-0 ${
-                      isVeryOld
+                    <Clock className={`h-4 w-4 shrink-0 ${isVeryOld
                         ? 'text-red-600 dark:text-red-400'
                         : isLongSession
-                        ? 'text-amber-600 dark:text-amber-400'
-                        : 'text-green-600 dark:text-green-400'
-                    }`} />
-                    <span className={`text-xs sm:text-sm font-bold ${
-                      isVeryOld
+                          ? 'text-amber-600 dark:text-amber-400'
+                          : 'text-green-600 dark:text-green-400'
+                      }`} />
+                    <span className={`text-xs sm:text-sm font-bold ${isVeryOld
                         ? 'text-red-900 dark:text-red-200'
                         : isLongSession
-                        ? 'text-amber-900 dark:text-amber-200'
-                        : 'text-green-900 dark:text-green-200'
-                    }`}>
+                          ? 'text-amber-900 dark:text-amber-200'
+                          : 'text-green-900 dark:text-green-200'
+                      }`}>
                       {hoursElapsed.toFixed(1)} hrs transcurridas
                     </span>
                   </div>

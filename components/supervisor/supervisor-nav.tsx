@@ -10,10 +10,7 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
-
-interface SupervisorNavProps {
-  userName: string
-}
+import type { SupervisorNavProps } from "@/lib/types/supervisor"
 
 export function SupervisorNav({ userName }: SupervisorNavProps) {
   const pathname = usePathname()
@@ -49,9 +46,9 @@ export function SupervisorNav({ userName }: SupervisorNavProps) {
           {/* Logo y nombre */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Image
-              src="/logo/iconoFavicon.png" 
-              alt="Logo" 
-              width={32} 
+              src="/logo/iconoFavicon.png"
+              alt="Logo"
+              width={32}
               height={32}
               className="sm:w-10 sm:h-10 flex-shrink-0"
             />
@@ -128,10 +125,10 @@ export function SupervisorNav({ userName }: SupervisorNavProps) {
                 <span className="text-sm text-muted-foreground">Tema</span>
                 <ThemeToggle />
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleSignOut} 
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSignOut}
                 className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
               >
                 <LogOut className="h-4 w-4" />

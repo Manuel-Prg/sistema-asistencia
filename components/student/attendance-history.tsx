@@ -3,10 +3,8 @@ import { Calendar, Clock, MapPin, Sun, Moon } from "lucide-react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 import type { AttendanceRecord } from "@/lib/supabase/types"
+import type { AttendanceHistoryProps } from "@/lib/types/student"
 
-interface AttendanceHistoryProps {
-  records: AttendanceRecord[]
-}
 
 export function AttendanceHistory({ records }: AttendanceHistoryProps) {
   if (records.length === 0) {

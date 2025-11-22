@@ -19,20 +19,7 @@ import { AlertCircle, LogOut, Clock } from "lucide-react"
 import { forceCheckOut } from "@/app/supervisor/actions"
 import { useRouter } from "next/navigation"
 import { formatDateTime } from "@/lib/utils/date-formatter"
-
-interface AdminCheckoutDialogProps {
-  record: {
-    id: string
-    check_in: string
-    shift: string
-    room: string
-    student: {
-      profile: {
-        full_name: string
-      }
-    }
-  }
-}
+import type { AdminCheckoutDialogProps } from "@/lib/types/supervisor"
 
 export function AdminCheckoutDialog({ record }: AdminCheckoutDialogProps) {
   const [open, setOpen] = useState(false)
@@ -48,7 +35,7 @@ export function AdminCheckoutDialog({ record }: AdminCheckoutDialogProps) {
   const handleForceCheckout = async () => {
     setLoading(true)
     const result = await forceCheckOut(record.id, reason || "Salida forzada por supervisor")
-    
+
     if (result.success) {
       setOpen(false)
       setReason("")
@@ -64,8 +51,8 @@ export function AdminCheckoutDialog({ record }: AdminCheckoutDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button 
-          variant="destructive" 
+        <Button
+          variant="destructive"
           size="sm"
           className="gap-2"
         >
@@ -117,17 +104,15 @@ export function AdminCheckoutDialog({ record }: AdminCheckoutDialogProps) {
           </div>
 
           {/* Hours Warning */}
-          <div className={`p-3 rounded-lg border-2 ${
-            willBeCapped 
-              ? 'bg-amber-50 dark:bg-amber-950 border-amber-300 dark:border-amber-700' 
+          <div className={`p-3 rounded-lg border-2 ${willBeCapped
+              ? 'bg-amber-50 dark:bg-amber-950 border-amber-300 dark:border-amber-700'
               : 'bg-blue-50 dark:bg-blue-950 border-blue-300 dark:border-blue-700'
-          }`}>
+            }`}>
             <div className="flex items-center gap-2">
               <Clock className={`h-4 w-4 ${willBeCapped ? 'text-amber-600 dark:text-amber-400' : 'text-blue-600 dark:text-blue-400'}`} />
               <div className="flex-1">
-                <p className={`text-sm font-semibold ${
-                  willBeCapped ? 'text-amber-900 dark:text-amber-200' : 'text-blue-900 dark:text-blue-200'
-                }`}>
+                <p className={`text-sm font-semibold ${willBeCapped ? 'text-amber-900 dark:text-amber-200' : 'text-blue-900 dark:text-blue-200'
+                  }`}>
                   Tiempo transcurrido: {hoursElapsed.toFixed(2)} horas
                 </p>
                 {willBeCapped && (
@@ -156,14 +141,14 @@ export function AdminCheckoutDialog({ record }: AdminCheckoutDialogProps) {
         </div>
 
         <DialogFooter className="gap-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => setOpen(false)}
             disabled={loading}
           >
             Cancelar
           </Button>
-          <Button 
+          <Button
             variant="destructive"
             onClick={handleForceCheckout}
             disabled={loading}

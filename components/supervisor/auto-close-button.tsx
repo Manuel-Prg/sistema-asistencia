@@ -15,11 +15,7 @@ import { Settings, Clock, AlertTriangle, CheckCircle } from "lucide-react"
 import { autoCloseOldRecords, capLongSessions } from "@/app/supervisor/actions"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-
-interface AutoCloseButtonProps {
-  longSessions: number
-  oldRecords: number
-}
+import type { AutoCloseButtonProps } from "@/lib/types/supervisor"
 
 export function AutoCloseButton({ longSessions, oldRecords }: AutoCloseButtonProps) {
   const [loading, setLoading] = useState<string | null>(null)
@@ -28,7 +24,7 @@ export function AutoCloseButton({ longSessions, oldRecords }: AutoCloseButtonPro
   const handleCapLongSessions = async () => {
     setLoading("cap")
     const result = await capLongSessions()
-    
+
     if (result.success) {
       toast.success(result.message)
       router.refresh()
@@ -41,7 +37,7 @@ export function AutoCloseButton({ longSessions, oldRecords }: AutoCloseButtonPro
   const handleCloseOldRecords = async () => {
     setLoading("close")
     const result = await autoCloseOldRecords()
-    
+
     if (result.success) {
       toast.success(result.message)
       router.refresh()
@@ -56,7 +52,7 @@ export function AutoCloseButton({ longSessions, oldRecords }: AutoCloseButtonPro
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button 
+        <Button
           variant={hasIssues ? "destructive" : "outline"}
           size="sm"
           className="gap-2"
@@ -74,7 +70,7 @@ export function AutoCloseButton({ longSessions, oldRecords }: AutoCloseButtonPro
           Administración de Sesiones
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        
+
         {/* Cap long sessions */}
         <DropdownMenuItem
           onClick={handleCapLongSessions}
@@ -82,15 +78,14 @@ export function AutoCloseButton({ longSessions, oldRecords }: AutoCloseButtonPro
           className="cursor-pointer"
         >
           <div className="flex items-start gap-3 w-full">
-            <Clock className={`h-5 w-5 mt-0.5 ${
-              longSessions > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'
-            }`} />
+            <Clock className={`h-5 w-5 mt-0.5 ${longSessions > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500'
+              }`} />
             <div className="flex-1">
               <p className="font-medium text-sm">
                 Limitar a 10 horas
               </p>
               <p className="text-xs text-muted-foreground">
-                {longSessions > 0 
+                {longSessions > 0
                   ? `${longSessions} ${longSessions === 1 ? 'sesión' : 'sesiones'} exceden 10hrs`
                   : 'No hay sesiones largas'
                 }
@@ -109,15 +104,14 @@ export function AutoCloseButton({ longSessions, oldRecords }: AutoCloseButtonPro
           className="cursor-pointer"
         >
           <div className="flex items-start gap-3 w-full">
-            <AlertTriangle className={`h-5 w-5 mt-0.5 ${
-              oldRecords > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-400 dark:text-gray-500'
-            }`} />
+            <AlertTriangle className={`h-5 w-5 mt-0.5 ${oldRecords > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-400 dark:text-gray-500'
+              }`} />
             <div className="flex-1">
               <p className="font-medium text-sm">
                 Cerrar registros antiguos
               </p>
               <p className="text-xs text-muted-foreground">
-                {oldRecords > 0 
+                {oldRecords > 0
                   ? `${oldRecords} ${oldRecords === 1 ? 'registro' : 'registros'} con +24hrs`
                   : 'No hay registros antiguos'
                 }
@@ -130,7 +124,7 @@ export function AutoCloseButton({ longSessions, oldRecords }: AutoCloseButtonPro
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
-        
+
         {!hasIssues && (
           <div className="px-2 py-3 text-center">
             <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
