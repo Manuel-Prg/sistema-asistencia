@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
+import { getSupabaseBrowserClient } from "@/lib/supabase/client"
 
 export function ExportButton() {
   const [loading, setLoading] = useState(false)
@@ -12,10 +13,43 @@ export function ExportButton() {
   const handleExport = async () => {
     setLoading(true)
     try {
-      // Tu lógica de exportación aquí
+      const supabase = getSupabaseBrowserClient()
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+
+      if (sessionError || !session?.access_token) {
+        throw new Error("No hay sesión activa")
+      }
+
+      const response = await fetch('/api/export_attendance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({}) // Enviar fechas si es necesario
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || "Error en la descarga")
+      }
+
+      const blob = await response.blob()
+
+      if (blob.size === 0) throw new Error("Archivo vacío")
+
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `asistencias_${new Date().toISOString().split('T')[0]}.xlsx`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      window.URL.revokeObjectURL(url)
+
       toast.success("Exportación completada")
-    } catch (error) {
-      toast.error("Error al exportar datos")
+    } catch (error: any) {
+      toast.error(error.message || "Error al exportar datos")
     } finally {
       setLoading(false)
     }
