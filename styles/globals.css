@@ -119,7 +119,71 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+:root.christmas-theme {
+  --christmas-red: oklch(0.55 0.22 25);
+  --christmas-green: oklch(0.45 0.15 145);
+  --christmas-gold: oklch(0.85 0.15 85);
+  --christmas-snow: oklch(0.98 0.01 240);
+
+  /* Ajustar colores primarios sutilmente */
+  --primary: oklch(0.45 0.15 145);
+  --accent: oklch(0.55 0.22 25);
+}
+
+.dark.christmas-theme {
+  --primary: oklch(0.50 0.18 145);
+  --accent: oklch(0.60 0.20 25);
+}
+
+/* Animación de caída de nieve con balanceo */
+/* Animación de caída de nieve (solo Y) */
+@keyframes fall-anim {
+  0% {
+    transform: translateY(-10vh);
+  }
+
+  100% {
+    transform: translateY(110vh);
+  }
+}
+
+@keyframes sway-anim {
+
+  0%,
+  100% {
+    transform: translateX(-10px);
+  }
+
+  50% {
+    transform: translateX(10px);
+  }
+}
+
+.snow-wrapper {
+  position: fixed;
+  top: -20px;
+  z-index: 9999;
+  user-select: none;
+  pointer-events: none;
+  animation-name: fall-anim;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.snow-inner {
+  animation-name: sway-anim;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Efecto de brillo navideño en hover */
+.christmas-theme button:hover {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+  transition: box-shadow 0.3s ease;
 }

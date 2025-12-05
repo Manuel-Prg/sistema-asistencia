@@ -30,6 +30,8 @@ export function SupervisorNav({ userName }: SupervisorNavProps) {
 
   // ✅ FUNCIÓN MEJORADA: Verifica si la ruta está activa de forma precisa
   const isActive = (href: string) => {
+    if (!pathname) return false // <-- Verificación de seguridad añadida
+
     // Si es el dashboard, solo debe estar activo cuando pathname es exactamente "/supervisor"
     if (href === "/supervisor") {
       return pathname === "/supervisor"
