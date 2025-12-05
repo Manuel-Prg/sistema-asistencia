@@ -63,10 +63,10 @@ export function StudentsTable({ students }: StudentsTableProps) {
                     <div className="flex-1 min-w-0 space-y-2">
                       <div>
                         <h3 className="font-bold text-base sm:text-lg text-gray-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                          {student.profile.full_name}
+                          {student.profile?.full_name || "Usuario Desconocido"}
                         </h3>
                         <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate mt-0.5">
-                          {student.profile.email}
+                          {student.profile?.email || "Sin email"}
                         </p>
                       </div>
 
