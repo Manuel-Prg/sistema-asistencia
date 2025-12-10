@@ -13,6 +13,12 @@ export function AttendanceTable({ records }: AttendanceTableProps) {
           🌙 Vespertino
         </Badge>
       )
+    } else if (shift === "completo") {
+      return (
+        <Badge className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white border-0 shadow-sm text-xs">
+          ⭐ Completo
+        </Badge>
+      )
     }
     return (
       <Badge className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-0 shadow-sm text-xs">

@@ -4,7 +4,7 @@
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
-export async function checkIn(room: string, shift: "matutino" | "vespertino") {
+export async function checkIn(room: string, shift: "matutino" | "vespertino" | "completo") {
   const supabase = await getSupabaseServerClient()
 
   const {

@@ -1,7 +1,7 @@
 // lib/supabase/types.ts
 export type UserRole = "student" | "supervisor"
 export type StudentType = "servicio_social" | "practicas"
-export type ShiftType = "matutino" | "vespertino"
+export type ShiftType = "matutino" | "vespertino" | "completo"
 
 export interface Profile {
   id: string

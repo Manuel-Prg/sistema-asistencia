@@ -111,10 +111,10 @@ export function ActiveStudents({ records }: ActiveStudentsProps) {
               <div
                 key={record.id}
                 className={`p-3 sm:p-4 rounded-xl border-2 transition-all ${isVeryOld
-                    ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800'
-                    : isLongSession
-                      ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800'
-                      : 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
+                  ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-800'
+                  : isLongSession
+                    ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800'
+                    : 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
                   }`}
               >
                 {/* Header section */}
@@ -135,38 +135,38 @@ export function ActiveStudents({ records }: ActiveStudentsProps) {
                   <Badge
                     variant="outline"
                     className={`shrink-0 text-xs ${isVeryOld
-                        ? 'bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700'
-                        : isLongSession
-                          ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                          : 'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700'
+                      ? 'bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700'
+                      : isLongSession
+                        ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700'
+                        : 'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700'
                       }`}
                   >
-                    {record.shift === "matutino" ? "☀️" : "🌙"}
+                    {record.shift === "matutino" ? "☀️" : record.shift === "vespertino" ? "🌙" : "☀️🌙"}
                     <span className="hidden sm:inline ml-1">
-                      {record.shift === "matutino" ? "Matutino" : "Vespertino"}
+                      {record.shift === "matutino" ? "Matutino" : record.shift === "vespertino" ? "Vespertino" : "Completo"}
                     </span>
                   </Badge>
                 </div>
 
                 {/* Hours indicator - Responsive layout */}
                 <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-lg ${isVeryOld
-                    ? 'bg-red-100 dark:bg-red-950/50'
-                    : isLongSession
-                      ? 'bg-amber-100 dark:bg-amber-950/50'
-                      : 'bg-green-100 dark:bg-green-950/50'
+                  ? 'bg-red-100 dark:bg-red-950/50'
+                  : isLongSession
+                    ? 'bg-amber-100 dark:bg-amber-950/50'
+                    : 'bg-green-100 dark:bg-green-950/50'
                   }`}>
                   <div className="flex items-center gap-2">
                     <Clock className={`h-4 w-4 shrink-0 ${isVeryOld
-                        ? 'text-red-600 dark:text-red-400'
-                        : isLongSession
-                          ? 'text-amber-600 dark:text-amber-400'
-                          : 'text-green-600 dark:text-green-400'
+                      ? 'text-red-600 dark:text-red-400'
+                      : isLongSession
+                        ? 'text-amber-600 dark:text-amber-400'
+                        : 'text-green-600 dark:text-green-400'
                       }`} />
                     <span className={`text-xs sm:text-sm font-bold ${isVeryOld
-                        ? 'text-red-900 dark:text-red-200'
-                        : isLongSession
-                          ? 'text-amber-900 dark:text-amber-200'
-                          : 'text-green-900 dark:text-green-200'
+                      ? 'text-red-900 dark:text-red-200'
+                      : isLongSession
+                        ? 'text-amber-900 dark:text-amber-200'
+                        : 'text-green-900 dark:text-green-200'
                       }`}>
                       {hoursElapsed.toFixed(1)} hrs transcurridas
                     </span>

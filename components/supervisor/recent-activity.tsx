@@ -89,9 +89,9 @@ export function RecentActivity({ records }: RecentActivityProps) {
 
                   {/* Shift badge */}
                   <Badge variant="outline" className="text-xs shrink-0">
-                    {record.shift === "matutino" ? "☀️" : "🌙"}
+                    {record.shift === "matutino" ? "☀️" : record.shift === "vespertino" ? "🌙" : "☀️🌙"}
                     <span className="hidden sm:inline ml-1">
-                      {record.shift === "matutino" ? "Matutino" : "Vespertino"}
+                      {record.shift === "matutino" ? "Matutino" : record.shift === "vespertino" ? "Vespertino" : "Completo"}
                     </span>
                   </Badge>
                 </div>

@@ -5,7 +5,7 @@ CREATE TYPE user_role AS ENUM ('student', 'supervisor');
 CREATE TYPE student_type AS ENUM ('servicio_social', 'practicas');
 
 -- Create enum for shift types
-CREATE TYPE shift_type AS ENUM ('matutino', 'vespertino');
+CREATE TYPE shift_type AS ENUM ('matutino', 'vespertino', 'completo');
 
 -- Create profiles table (extends Supabase auth.users)
 CREATE TABLE profiles (

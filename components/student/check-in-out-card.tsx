@@ -41,7 +41,7 @@ const ROOMS = [
 
 export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
   const router = useRouter();
-  const [shift, setShift] = useState<"matutino" | "vespertino">("matutino");
+  const [shift, setShift] = useState<"matutino" | "vespertino" | "completo">("matutino");
   const [room, setRoom] = useState<string>(ROOMS[0]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{
@@ -158,14 +158,21 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
                     <div className="flex items-start gap-2 text-xs sm:text-sm text-emerald-800 dark:text-emerald-300">
                       {activeRecord.shift === "matutino" ? (
                         <Sun className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                      ) : (
+                      ) : activeRecord.shift === "vespertino" ? (
                         <Moon className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      ) : (
+                        <div className="flex mt-0.5 flex-shrink-0">
+                          <Sun className="h-4 w-4 -mr-1" />
+                          <Moon className="h-4 w-4" />
+                        </div>
                       )}
                       <span>
                         Turno{" "}
                         {activeRecord.shift === "matutino"
                           ? "Matutino (11:00 - 14:00)"
-                          : "Vespertino (14:00 - 18:00)"}
+                          : activeRecord.shift === "vespertino"
+                            ? "Vespertino (14:00 - 18:00)"
+                            : "Completo (11:00 - 18:00)"}
                       </span>
                     </div>
 
@@ -255,6 +262,18 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
                       <div className="flex items-center gap-2">
                         <Moon className="h-4 w-4" />
                         Vespertino (14:00 - 18:00)
+                      </div>
+                    </SelectItem>
+                    <SelectItem
+                      value="completo"
+                      className="text-sm sm:text-base"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="flex">
+                          <Sun className="h-4 w-4 -mr-1" />
+                          <Moon className="h-4 w-4" />
+                        </div>
+                        Completo (11:00 - 18:00)
                       </div>
                     </SelectItem>
                   </SelectContent>
