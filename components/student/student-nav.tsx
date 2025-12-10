@@ -29,6 +29,7 @@ export function StudentNav({ userName }: StudentNavProps) {
               alt="Logo"
               width={40}
               height={40}
+              className="w-10 h-10"
             />
             <div className="min-w-0 flex-1">
               <h1 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 dark:text-white truncate">

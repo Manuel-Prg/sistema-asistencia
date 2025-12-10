@@ -105,7 +105,7 @@ export default function LoginPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Image src="/logo/iconoFavicon.png" alt="Logo" width={40} height={40} />
+              <Image src="/logo/iconoFavicon.png" alt="Logo" width={40} height={40} className="w-10 h-10" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">Sistema de Asistencia</h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Gestión escolar integral</p>
@@ -153,6 +153,7 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     disabled={loading}
+                    autoComplete="given-name"
                     className="h-11 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
                   />
                 </div>
@@ -168,6 +169,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={loading}
+                    autoComplete="current-password"
                     className="h-11 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
                   />
                 </div>
