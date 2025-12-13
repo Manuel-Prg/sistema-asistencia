@@ -1,12 +1,46 @@
 // app/api/active-students/route.ts
 import { createClient } from "@supabase/supabase-js"
 import { NextResponse } from "next/server"
+import { headers } from "next/headers"
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export async function GET() {
+// Rate limiting simple (puedes mejorarlo con Redis o Upstash)
+const requestLog = new Map<string, number[]>()
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now()
+  const windowMs = 180000 // 3 minutos
+  const maxRequests = 90 // 90 requests por 3 minutos (30 por minuto)
+
+  const requests = requestLog.get(ip) || []
+  const recentRequests = requests.filter(time => now - time < windowMs)
+
+  if (recentRequests.length >= maxRequests) {
+    return false
+  }
+
+  recentRequests.push(now)
+  requestLog.set(ip, recentRequests)
+  return true
+}
+
+export async function GET(request: Request) {
   try {
+    // Rate limiting
+    const headersList = headers()
+    const ip = (await headersList).get('x-forwarded-for')?.split(',')[0] ||
+      (await headersList).get('x-real-ip') ||
+      'unknown'
+
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { error: "Too many requests", activeStudents: [] },
+        { status: 429 }
+      )
+    }
+
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
       return NextResponse.json({ error: "Config error", activeStudents: [] })
     }
@@ -42,7 +76,7 @@ export async function GET() {
       shift: r.shift,
       room: r.room,
     })) || []
-    
+
     return NextResponse.json({ activeStudents: formatted }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate',
@@ -51,9 +85,9 @@ export async function GET() {
       }
     })
   } catch (error: any) {
-    return NextResponse.json({ 
-      error: error.message || "Server error", 
-      activeStudents: [] 
+    return NextResponse.json({
+      error: error.message || "Server error",
+      activeStudents: []
     })
   }
 }

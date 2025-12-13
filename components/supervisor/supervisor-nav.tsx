@@ -50,9 +50,9 @@ export function SupervisorNav({ userName }: SupervisorNavProps) {
             <Image
               src="/logo/iconoFavicon.png"
               alt="Logo"
-              width={32}
-              height={32}
-              className="sm:w-10 sm:h-10 flex-shrink-0"
+              width={40}
+              height={40}
+              className="flex-shrink-0"
             />
             <div className="min-w-0">
               <h1 className="text-sm sm:text-lg font-bold text-gray-900 dark:text-white truncate">
