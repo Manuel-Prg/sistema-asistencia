@@ -8,11 +8,11 @@ export function Footer() {
           <p className="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
             © {new Date().getFullYear()} Todos los derechos reservados. Casa Universitaria del Agua
           </p>
-          
+
           {/* Links opcionales */}
           <div className="flex items-center gap-4 text-sm">
             <span className="text-gray-500 dark:text-gray-400">
-              Versión 1.0
+              Versión 2.5
             </span>
           </div>
         </div>

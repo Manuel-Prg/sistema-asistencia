@@ -101,7 +101,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
       {/* Header */}
-      <header className="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800">
+      <header className="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -125,7 +125,7 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-4 py-8">
         <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Login Card */}
-          <Card className="w-full shadow-xl border-0 bg-white dark:bg-gray-900 backdrop-blur">
+          <Card className="w-full shadow-xl border-0 bg-white dark:bg-gray-900 backdrop-blur animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100 fill-mode-both">
             <CardHeader className="space-y-1 text-center pb-6">
               <div className="flex justify-center mb-4">
                 <div className="p-4 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl shadow-lg">
@@ -199,7 +199,7 @@ export default function LoginPage() {
           </Card>
 
           {/* Active Students Card */}
-          <Card className="w-full shadow-xl border-0 bg-white dark:bg-gray-900 backdrop-blur">
+          <Card className="w-full shadow-xl border-0 bg-white dark:bg-gray-900 backdrop-blur animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 fill-mode-both">
             <CardHeader className="space-y-1 pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-gradient-to-br from-green-600 to-emerald-600 rounded-xl shadow-lg">
