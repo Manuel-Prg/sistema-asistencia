@@ -531,10 +531,10 @@ El sistema se adapta a:
 
 ### **Quiero cambiar mi contraseña**
 ```
-PRÓXIMAMENTE:
-- Opción "Cambiar contraseña" en perfil
-- Reset por email si la olvidas
-- Autenticación de dos factores
+1. En el Login, haz clic en "¿Olvidaste tu contraseña?"
+2. Ingresa tu correo electrónico registrado
+3. Recibirás un enlace de recuperación
+4. Sigue el enlace y crea tu nueva contraseña
 ```
 
 ---

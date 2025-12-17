@@ -36,7 +36,13 @@ TypeScript/TSX Files:
 │   ├── api/
 │   │   └── active-students/route.ts   (60 líneas)
 │   ├── login/
-│   │   └── page.tsx                   (250 líneas)
+│   │   └── page.tsx                   (280 líneas)
+│   ├── forgot-password/
+│   │   └── page.tsx                   (280 líneas)
+│   ├── reset-password/
+│   │   └── page.tsx                   (320 líneas)
+│   ├── auth/
+│   │   └── callback/route.ts          (60 líneas)
 │   ├── student/
 │   │   ├── actions.ts                 (100 líneas)
 │   │   ├── page.tsx                   (65 líneas)
@@ -47,6 +53,7 @@ TypeScript/TSX Files:
 │       └── layout.tsx                 (35 líneas)
 ├── components/
 │   ├── refresh-button.tsx             (35 líneas)
+│   ├── sign-out-button.tsx            (30 líneas)
 │   ├── theme-provider.tsx             (15 líneas)
 │   ├── theme-toggle.tsx               (20 líneas)
 │   ├── student/
@@ -78,7 +85,7 @@ TypeScript/TSX Files:
 ├── hooks/                             (2 archivos)
 └── styles/                            (CSS files)
 
-TOTAL: ~7,000 líneas de código TypeScript/TSX
+TOTAL: ~7,700 líneas de código TypeScript/TSX
 ```
 
 ### Configuración

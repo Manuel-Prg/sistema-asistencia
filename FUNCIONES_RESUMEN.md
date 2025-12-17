@@ -61,7 +61,22 @@
 ✓ Layout compartido para supervisor
 ✓ Verifica autenticación
 ✓ Verifica que sea supervisor
+✓ Verifica que sea supervisor
 ✓ Incluye Toaster para notificaciones
+```
+
+### **app/forgot-password/page.tsx**
+```
+✓ Formulario solicitud de recuperación
+✓ Llama a Supabase resetPasswordForEmail
+✓ Maneja estados de carga y error
+```
+
+### **app/reset-password/page.tsx**
+```
+✓ Formulario de nueva contraseña
+✓ Valida reglas de seguridad
+✓ Llama a Supabase updateUser
 ```
 
 ---

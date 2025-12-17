@@ -51,6 +51,25 @@ sistema-asistencia/
 - ✅ Redirige a login si no está autenticado
 - ✅ Valida rol del usuario para acceso correcto
 - ✅ Maneja refresh de tokens automáticamente
+- ✅ Protege contra bucles de redirección (Perfil incompleto)
+
+---
+
+## 🔐 Recuperación de Contraseña
+
+### **Flujo Completo**
+1. **Solicitud (/forgot-password):**
+   - Usuario ingresa correo
+   - Sistema genera link de recuperación
+   - Se envía correo vía Supabase (plantilla personalizada)
+2. **Redirección (/auth/callback):**
+   - Valida el token del correo
+   - Intercambia código por sesión
+   - Redirige a formulario de cambio
+3. **Cambio (/reset-password):**
+   - Usuario ingresa nueva contraseña
+   - `updateUser` actualiza credenciales
+   - Redirige al login con éxito
 
 ---
 
@@ -107,6 +126,11 @@ sistema-asistencia/
 - Perfil del estudiante
 - Entrada activa (si existe)
 - Últimos 10 registros de asistencia
+
+**Manejo de Errores:**
+- Detecta si el usuario no tiene perfil de estudiante
+- Muestra pantalla de "Perfil Incompleto"
+- Ofrece botón de cierre de sesión para evitar bucles infinitos y permitir reintentar con otra cuenta
 
 ---
 
@@ -275,6 +299,16 @@ interface ProgressCardProps {
 /**
  * Acciones administrativas del supervisor
  * Gestión de registros y horas
+ * Creación de nuevos usuarios (Supervisor)
+ */
+
+// createNewUser(data)
+/**
+ * Crea nuevo usuario estudiante o supervisor
+ * - Usa `admin.createUser` de Supabase
+ * - Fuerza `email_confirm: false` para respetar flujo de seguridad
+ * - Dispara explícitamente `auth.resend({ type: 'signup' })` para garantizar entrega del correo
+ * - Crea perfil y registros asociados
  */
 
 // signOut()

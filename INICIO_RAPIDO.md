@@ -259,17 +259,15 @@ Triggers: Cálculos automáticos
 ✅ 100% Responsive
 ✅ Documentación completa
 ✅ Seguridad (Auth + RLS + validación)
+✅ Recuperación de contraseña
+✅ Reset por email
 ```
 
 ### ⏳ EN DESARROLLO
 
 ```
-⏳ Exportar a Excel
 ⏳ Reportes PDF
 ⏳ Gráficos interactivos
-⏳ Cambiar contraseña
-⏳ Reset por email
-⏳ 2FA (autenticación de dos factores)
 ```
 
 ---
@@ -323,6 +321,7 @@ Triggers: Cálculos automáticos
 ### "No puedo iniciar sesión"
 ```
 ✓ Verifica email y contraseña
+✓ Revisa si te llegó el correo de confirmación
 ✓ Verifica que la cuenta está activada
 ✓ Intenta en incógnito
 ✓ Limpia cookies y cache
@@ -443,5 +442,5 @@ Tienes TODO lo que necesitas:
 
 **Sistema de Asistencia para Estudiantes**
 Casa Universitaria del Agua
-15 de noviembre de 2024
+15 de noviembre de 2025
 
