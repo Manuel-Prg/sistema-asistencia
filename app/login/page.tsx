@@ -112,9 +112,12 @@ export default function LoginPage() {
               </div>
             </div>
             <div className="hidden sm:block">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Bienvenido</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Accede con tus credenciales</p>
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Bienvenido</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Accede con tus credenciales</p>
+                </div>
+                <Image src="/logo/logo_remove_background.png" alt="Logo" width={40} height={40} className="w-10 h-10" />
               </div>
             </div>
           </div>
@@ -172,6 +175,11 @@ export default function LoginPage() {
                     autoComplete="current-password"
                     className="h-11 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
                   />
+                  <div className="flex justify-end">
+                    <a href="/forgot-password" className="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                      ¿Olvidaste tu contraseña?
+                    </a>
+                  </div>
                 </div>
 
                 {error && (

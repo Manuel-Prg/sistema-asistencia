@@ -20,7 +20,7 @@ export default async function StudentDashboard() {
   if (!user) {
     redirect("/login")
   }
-  
+
   const { data: student } = await supabase
     .from("students")
     .select("*, profile:profiles(*)")
@@ -28,7 +28,28 @@ export default async function StudentDashboard() {
     .single()
 
   if (!student) {
-    redirect("/login")
+    const { SignOutButton } = await import("@/components/sign-out-button")
+
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <div className="max-w-md w-full bg-white dark:bg-gray-800 shadow-xl rounded-xl p-8 text-center space-y-6">
+          <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+            <span className="text-2xl">⚠️</span>
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Perfil Incompleto</h1>
+            <p className="text-gray-500 dark:text-gray-400">
+              Tu cuenta ha sido creada pero no se encontró tu registro de estudiante.
+              Por favor contacta al administrador.
+            </p>
+          </div>
+          <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+            <p className="text-sm text-gray-400 mb-4">ID de Usuario: {user.id}</p>
+            <SignOutButton />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const { data: activeRecord } = await supabase

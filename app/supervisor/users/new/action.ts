@@ -40,7 +40,7 @@ export async function createNewUser(data: CreateUserData) {
     const { data: newUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
       password: data.password,
-      email_confirm: true,
+      email_confirm: false,
     })
 
     if (authError) {
@@ -53,6 +53,19 @@ export async function createNewUser(data: CreateUserData) {
     }
 
     console.log("User created in auth:", newUser.user.id)
+
+    // Force send confirmation email
+    const { error: resendError } = await supabaseAdmin.auth.resend({
+      type: 'signup',
+      email: data.email,
+    })
+
+    if (resendError) {
+      console.warn("Could not send confirmation email:", resendError)
+      // We don't block the process but warn the admin
+    } else {
+      console.log("Confirmation email sent to:", data.email)
+    }
 
     // Now manually create the profile (bypassing the trigger issue)
     const { error: profileError } = await supabaseAdmin.from("profiles").insert({
