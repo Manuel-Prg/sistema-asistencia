@@ -94,7 +94,7 @@ export default function NewUserPage() {
               Completa todos los campos para crear una nueva cuenta
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent className="p-6 sm:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name and Email */}
@@ -146,10 +146,13 @@ export default function NewUserPage() {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
                   disabled={loading}
-                  placeholder="Mínimo 6 caracteres"
-                  minLength={6}
+                  placeholder="Mínimo 8 caracteres"
+                  minLength={8}
                   className="h-11 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500"
                 />
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  La contraseña debe tener al menos 8 caracteres.
+                </p>
               </div>
 
               {/* Role Selection - Cards */}
@@ -163,18 +166,16 @@ export default function NewUserPage() {
                     type="button"
                     onClick={() => setFormData({ ...formData, role: "student" })}
                     disabled={loading}
-                    className={`p-4 rounded-xl border-2 transition-all ${
-                      formData.role === "student"
-                        ? "border-indigo-600 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 shadow-md"
-                        : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800"
-                    }`}
+                    className={`p-4 rounded-xl border-2 transition-all ${formData.role === "student"
+                      ? "border-indigo-600 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 shadow-md"
+                      : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800"
+                      }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
-                        formData.role === "student"
-                          ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
-                      }`}>
+                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${formData.role === "student"
+                        ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
+                        }`}>
                         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
@@ -190,18 +191,16 @@ export default function NewUserPage() {
                     type="button"
                     onClick={() => setFormData({ ...formData, role: "supervisor" })}
                     disabled={loading}
-                    className={`p-4 rounded-xl border-2 transition-all ${
-                      formData.role === "supervisor"
-                        ? "border-indigo-600 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 shadow-md"
-                        : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800"
-                    }`}
+                    className={`p-4 rounded-xl border-2 transition-all ${formData.role === "supervisor"
+                      ? "border-indigo-600 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 shadow-md"
+                      : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800"
+                      }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
-                        formData.role === "supervisor"
-                          ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
-                      }`}>
+                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${formData.role === "supervisor"
+                        ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
+                        }`}>
                         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
@@ -230,11 +229,10 @@ export default function NewUserPage() {
                         type="button"
                         onClick={() => setFormData({ ...formData, studentType: "servicio_social", requiredHours: 360 })}
                         disabled={loading}
-                        className={`p-4 rounded-xl border-2 transition-all ${
-                          formData.studentType === "servicio_social"
-                            ? "border-blue-600 bg-white dark:bg-gray-800 shadow-md"
-                            : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800/50"
-                        }`}
+                        className={`p-4 rounded-xl border-2 transition-all ${formData.studentType === "servicio_social"
+                          ? "border-blue-600 bg-white dark:bg-gray-800 shadow-md"
+                          : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800/50"
+                          }`}
                       >
                         <p className="font-semibold text-gray-800 dark:text-white">Servicio Social</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">360 horas requeridas</p>
@@ -244,11 +242,10 @@ export default function NewUserPage() {
                         type="button"
                         onClick={() => setFormData({ ...formData, studentType: "practicas", requiredHours: 480 })}
                         disabled={loading}
-                        className={`p-4 rounded-xl border-2 transition-all ${
-                          formData.studentType === "practicas"
-                            ? "border-blue-600 bg-white dark:bg-gray-800 shadow-md"
-                            : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800/50"
-                        }`}
+                        className={`p-4 rounded-xl border-2 transition-all ${formData.studentType === "practicas"
+                          ? "border-blue-600 bg-white dark:bg-gray-800 shadow-md"
+                          : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800/50"
+                          }`}
                       >
                         <p className="font-semibold text-gray-800 dark:text-white">Prácticas Profesionales</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">480 horas requeridas</p>
@@ -277,7 +274,7 @@ export default function NewUserPage() {
               {/* Alerts */}
               {error && (
                 <Alert variant="destructive" className="border-red-200 bg-red-50 dark:bg-red-950 dark:border-red-900">
-                  <AlertDescription className="flex items-center gap-2">
+                  <AlertDescription className="flex items-center gap-2 text-red-800 dark:text-red-200">
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>

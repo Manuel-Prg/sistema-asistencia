@@ -3,6 +3,8 @@
 
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { getSupabaseAdminClient } from "@/lib/supabase/admin"
+import { validatePasswordStrength } from "@/lib/password-utils"
+import { isPasswordCompromised } from "@/app/actions/check-pwned"
 
 interface CreateUserData {
   email: string
@@ -16,6 +18,18 @@ interface CreateUserData {
 export async function createNewUser(data: CreateUserData) {
   try {
     const supabase = await getSupabaseServerClient()
+
+    // Validate password strength
+    const validation = validatePasswordStrength(data.password)
+    if (!validation.isValid) {
+      return { error: validation.errors[0] }
+    }
+
+    // Check against HIBP
+    const isCompromised = await isPasswordCompromised(data.password)
+    if (isCompromised) {
+      return { error: "La contraseña ha aparecido en filtraciones de datos. Elige una más segura." }
+    }
 
     // Check if supervisor is authenticated
     const {

@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Lock, Check, Eye, EyeOff, Loader2 } from "lucide-react"
+import { validatePasswordStrength } from "@/lib/password-utils"
+import { isPasswordCompromised } from "@/app/actions/check-pwned"
 
 export default function ResetPasswordPage() {
     const [password, setPassword] = useState("")
@@ -35,10 +37,24 @@ export default function ResetPasswordPage() {
             return
         }
 
+        const validation = validatePasswordStrength(password)
+        if (!validation.isValid) {
+            setError(validation.errors[0])
+            return
+        }
+
         setLoading(true)
         setError(null)
 
         try {
+            // Check against HIBP
+            const isCompromised = await isPasswordCompromised(password)
+            if (isCompromised) {
+                setError("Esta contraseña ha aparecido en filtraciones de datos conocidas. Por favor, elige una más segura.")
+                setLoading(false)
+                return
+            }
+
             const { error } = await supabase.auth.updateUser({
                 password: password
             })
@@ -100,7 +116,7 @@ export default function ResetPasswordPage() {
                                     <Input
                                         id="password"
                                         type={showPassword ? "text" : "password"}
-                                        placeholder="Mínimo 6 caracteres"
+                                        placeholder="Mínimo 8 caracteres"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
@@ -115,6 +131,9 @@ export default function ResetPasswordPage() {
                                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </button>
                                 </div>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    La contraseña debe tener al menos 8 caracteres y no ser de uso común.
+                                </p>
                             </div>
 
                             <div className="space-y-2">
