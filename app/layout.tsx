@@ -5,6 +5,7 @@ import { GeistMono } from 'geist/font/mono'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
+import SnowAnimation from '@/components/snow-animation'
 
 
 export const metadata: Metadata = {
@@ -41,6 +42,7 @@ export default function RootLayout({
           {children}
         </ThemeProvider>
         <Analytics />
+        <SnowAnimation />
       </body>
     </html>
   )

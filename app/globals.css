@@ -122,3 +122,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Snow Animation Styles */
+.snowflake {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  background-color: white;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+}
