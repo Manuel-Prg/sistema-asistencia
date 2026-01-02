@@ -1,4 +1,4 @@
-import { supabase_client } from '@/lib/supabase_client';
+import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 
 /**
  * Obtiene registros de asistencia entre dos fechas y normaliza filas para Excel
@@ -8,7 +8,7 @@ import { supabase_client } from '@/lib/supabase_client';
  */
 export const get_attendance_rows_for_export = async (from_iso: string | null, to_iso: string | null): Promise<any[]> => {
 	try {
-		let query = supabase_client
+		let query = getSupabaseBrowserClient()
 			.from('attendance_records')
 			.select(`
 				id,

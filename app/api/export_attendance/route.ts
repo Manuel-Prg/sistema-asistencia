@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { create_supabase_client_for_token } from '@/lib/supabase_server';
+import { createSupabaseClientForToken } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
     try {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Crear cliente supabase
-        const supabase = create_supabase_client_for_token(access_token);
+        const supabase = createSupabaseClientForToken(access_token);
 
         // Construir consulta
         let query = supabase

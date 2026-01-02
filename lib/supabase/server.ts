@@ -1,4 +1,5 @@
 // lib/supabase/server.ts
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 
@@ -22,3 +23,13 @@ export async function getSupabaseServerClient() {
     },
   })
 }
+
+export const createSupabaseClientForToken = (access_token: string): SupabaseClient => {
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    },
+  });
+};

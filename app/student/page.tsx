@@ -4,7 +4,7 @@ import { redirect } from "next/navigation"
 import { CheckInOutCard } from "@/components/student/check-in-out-card"
 import { ProgressCard } from "@/components/student/progress-card"
 import { AttendanceHistory } from "@/components/student/attendance-history"
-import { RefreshButton } from "@/components/refresh-button"
+import { RefreshButton } from "@/components/common/refresh-button"
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -28,7 +28,7 @@ export default async function StudentDashboard() {
     .single()
 
   if (!student) {
-    const { SignOutButton } = await import("@/components/sign-out-button")
+    const { SignOutButton } = await import("@/components/auth/sign-out-button")
 
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">

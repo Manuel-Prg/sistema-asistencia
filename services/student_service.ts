@@ -1,4 +1,4 @@
-import { supabase_client } from '@/lib/supabase_client';
+import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { StudentWithProfile, Student } from '@/types/database';
 
 /**
@@ -7,7 +7,7 @@ import { StudentWithProfile, Student } from '@/types/database';
  */
 export const get_all_students = async (): Promise<StudentWithProfile[]> => {
   try {
-    const { data, error } = await supabase_client
+    const { data, error } = await getSupabaseBrowserClient()
       .from('students')
       .select('*, profile:profiles(*)');
 
@@ -31,7 +31,7 @@ export const get_student_by_id = async (student_id: string): Promise<StudentWith
       throw new Error('student_id es requerido');
     }
 
-    const { data, error } = await supabase_client
+    const { data, error } = await getSupabaseBrowserClient()
       .from('students')
       .select('*, profile:profiles(*)')
       .eq('id', student_id)
@@ -66,7 +66,7 @@ export const update_accumulated_hours = async (
     }
 
     // Obtiene las horas actuales
-    const { data: student, error: fetch_error } = await supabase_client
+    const { data: student, error: fetch_error } = await getSupabaseBrowserClient()
       .from('students')
       .select('accumulated_hours')
       .eq('id', student_id)
@@ -80,7 +80,7 @@ export const update_accumulated_hours = async (
 
     const new_accumulated_hours = (student.accumulated_hours || 0) + hours_to_add;
 
-    const { data, error } = await supabase_client
+    const { data, error } = await getSupabaseBrowserClient()
       .from('students')
       .update({ accumulated_hours: new_accumulated_hours })
       .eq('id', student_id)

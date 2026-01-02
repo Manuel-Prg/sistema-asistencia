@@ -1,4 +1,4 @@
-import { supabase_client } from '@/lib/supabase_client';
+import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { AttendanceRecord, AttendanceWithStudent, Shift } from '@/types/database';
 
 /**
@@ -7,7 +7,7 @@ import { AttendanceRecord, AttendanceWithStudent, Shift } from '@/types/database
  */
 export const get_all_attendance_records = async (): Promise<AttendanceWithStudent[]> => {
   try {
-    const { data, error } = await supabase_client
+    const { data, error } = await getSupabaseBrowserClient()
       .from('attendance_records')
       .select('*, student:students(*, profile:profiles(*))');
 
@@ -37,7 +37,7 @@ export const create_check_in = async (
       throw new Error('Faltan parámetros requeridos: student_id, shift, room');
     }
 
-    const { data, error } = await supabase_client
+    const { data, error } = await getSupabaseBrowserClient()
       .from('attendance_records')
       .insert([
         {
@@ -77,7 +77,7 @@ export const create_check_out = async (
     const check_out_time = new Date();
 
     // Obtiene el registro existente para calcular horas
-    const { data: existing_record, error: fetch_error } = await supabase_client
+    const { data: existing_record, error: fetch_error } = await getSupabaseBrowserClient()
       .from('attendance_records')
       .select('check_in')
       .eq('id', record_id)
@@ -93,7 +93,7 @@ export const create_check_out = async (
     const check_in_date = new Date(existing_record.check_in);
     const hours_worked = (check_out_time.getTime() - check_in_date.getTime()) / (1000 * 60 * 60);
 
-    const { data, error } = await supabase_client
+    const { data, error } = await getSupabaseBrowserClient()
       .from('attendance_records')
       .update({
         check_out: check_out_time.toISOString(),
@@ -124,7 +124,7 @@ export const get_student_attendance = async (student_id: string): Promise<Attend
       throw new Error('student_id es requerido');
     }
 
-    const { data, error } = await supabase_client
+    const { data, error } = await getSupabaseBrowserClient()
       .from('attendance_records')
       .select('*')
       .eq('student_id', student_id)
