@@ -4,14 +4,19 @@ import { type NextRequest, NextResponse } from "next/server"
 export async function GET(request: NextRequest) {
     const { searchParams, origin } = new URL(request.url)
     const code = searchParams.get("code")
-    // if "next" is in param, use it as the redirect URL
     const next = searchParams.get("next") ?? "/"
+    const error = searchParams.get("error")
+    const errorDescription = searchParams.get("error_description")
+
+    // Si ya viene un error en la URL, redirigir al login con el error
+    if (error) {
+        return NextResponse.redirect(
+            `${origin}/login?error=${error}&message=${encodeURIComponent(errorDescription || 'Error de autenticación')}`
+        )
+    }
 
     if (code) {
         const cookieStore = request.cookies
-
-        // Create an empty response that we will return (redirect)
-        // We will attach the cookies to this response
         const response = NextResponse.redirect(`${origin}${next}`)
 
         const supabase = createServerClient(
@@ -23,7 +28,6 @@ export async function GET(request: NextRequest) {
                         return cookieStore.get(name)?.value
                     },
                     set(name: string, value: string, options: CookieOptions) {
-                        // Set the cookie on the response object
                         response.cookies.set({
                             name,
                             value,
@@ -31,7 +35,6 @@ export async function GET(request: NextRequest) {
                         })
                     },
                     remove(name: string, options: CookieOptions) {
-                        // Remove (set empty) on the response object
                         response.cookies.set({
                             name,
                             value: "",
@@ -42,13 +45,19 @@ export async function GET(request: NextRequest) {
             }
         )
 
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
 
-        if (!error) {
+        if (!exchangeError) {
             return response
         }
+
+        console.error('Error al intercambiar código:', exchangeError)
+
+        return NextResponse.redirect(
+            `${origin}/login?error=auth-code-error&message=${encodeURIComponent(exchangeError.message)}`
+        )
     }
 
-    // Return the user to an error page with instructions
-    return NextResponse.redirect(`${origin}/login?error=auth-code-error`)
+    // No hay código ni error
+    return NextResponse.redirect(`${origin}/login?error=no-code`)
 }
