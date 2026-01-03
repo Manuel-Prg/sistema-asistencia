@@ -5,6 +5,7 @@ import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { getSupabaseAdminClient } from "@/lib/supabase/admin"
 import { validatePasswordStrength } from "@/lib/password-utils"
 import { isPasswordCompromised } from "@/app/actions/check-pwned"
+import { getSiteUrl } from "@/lib/url-utils"
 
 interface CreateUserData {
   email: string
@@ -72,6 +73,9 @@ export async function createNewUser(data: CreateUserData) {
     const { error: resendError } = await supabaseAdmin.auth.resend({
       type: 'signup',
       email: data.email,
+      options: {
+        emailRedirectTo: `${getSiteUrl()}auth/callback`,
+      },
     })
 
     if (resendError) {
