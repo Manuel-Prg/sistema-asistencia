@@ -1,16 +1,14 @@
 export function getSiteUrl() {
     let url =
         process.env.NEXT_PUBLIC_SITE_URL ??
-        process.env.NEXT_PUBLIC_VERCEL_URL ??
         'http://localhost:3000'
 
-    // No remover /auth/callback si viene en la variable
-    // url = url.replace(/\/auth\/callback\/?$/, '')
+    // Asegurar que tiene el protocolo correcto
+    if (!url.startsWith('http')) {
+        url = url.includes('localhost') ? `http://${url}` : `https://${url}`
+    }
 
-    // Make sure to include `https://` when not localhost.
-    url = url.includes('http') ? url : `https://${url}`
-
-    // NO agregar trailing slash aquí
+    // Remover trailing slash si existe
     url = url.endsWith('/') ? url.slice(0, -1) : url
 
     return url

@@ -5,15 +5,6 @@ export async function GET(request: NextRequest) {
     const { searchParams, origin } = new URL(request.url)
     const code = searchParams.get("code")
     const next = searchParams.get("next") ?? "/"
-    const error = searchParams.get("error")
-    const errorDescription = searchParams.get("error_description")
-
-    // Si ya viene un error en la URL, redirigir al login con el error
-    if (error) {
-        return NextResponse.redirect(
-            `${origin}/login?error=${error}&message=${encodeURIComponent(errorDescription || 'Error de autenticación')}`
-        )
-    }
 
     if (code) {
         const cookieStore = request.cookies
@@ -45,19 +36,14 @@ export async function GET(request: NextRequest) {
             }
         )
 
-        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+        const { error } = await supabase.auth.exchangeCodeForSession(code)
 
-        if (!exchangeError) {
+        if (!error) {
             return response
         }
 
-        console.error('Error al intercambiar código:', exchangeError)
-
-        return NextResponse.redirect(
-            `${origin}/login?error=auth-code-error&message=${encodeURIComponent(exchangeError.message)}`
-        )
+        console.error('Error al intercambiar código:', error)
     }
 
-    // No hay código ni error
-    return NextResponse.redirect(`${origin}/login?error=no-code`)
+    return NextResponse.redirect(`${origin}/login?error=auth-code-error`)
 }
