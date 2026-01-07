@@ -1,10 +1,18 @@
-// app/student/page.tsx
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { CheckInOutCard } from "@/components/student/check-in-out-card"
-import { ProgressCard } from "@/components/student/progress-card"
-import { AttendanceHistory } from "@/components/student/attendance-history"
 import { RefreshButton } from "@/components/common/refresh-button"
+import dynamicImport from "next/dynamic"
+import { Skeleton } from "@/components/ui/skeleton"
+
+const CheckInOutCard = dynamicImport(() => import("@/components/student/check-in-out-card").then(mod => mod.CheckInOutCard), {
+  loading: () => <Skeleton className="h-[300px] w-full rounded-xl" />
+})
+const ProgressCard = dynamicImport(() => import("@/components/student/progress-card").then(mod => mod.ProgressCard), {
+  loading: () => <Skeleton className="h-[300px] w-full rounded-xl" />
+})
+const AttendanceHistory = dynamicImport(() => import("@/components/student/attendance-history").then(mod => mod.AttendanceHistory), {
+  loading: () => <Skeleton className="h-[400px] w-full rounded-xl" />
+})
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0

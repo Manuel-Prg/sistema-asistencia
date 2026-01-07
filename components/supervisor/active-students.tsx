@@ -1,3 +1,5 @@
+"use client"
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { UserCheck, Clock, AlertTriangle } from "lucide-react"
@@ -6,7 +8,12 @@ import { AdminCheckoutDialog } from "./admin-checkout-dialog"
 import { AutoCloseButton } from "./auto-close-button"
 import type { ActiveStudentsProps } from "@/lib/types/supervisor"
 
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { LogOut } from "lucide-react"
+
 export function ActiveStudents({ records }: ActiveStudentsProps) {
+  const [selectedRecord, setSelectedRecord] = useState<any>(null)
   // Calcular estadísticas
   const longSessions = records.filter(r => {
     const checkIn = new Date(r.check_in)
@@ -172,7 +179,15 @@ export function ActiveStudents({ records }: ActiveStudentsProps) {
                     </span>
                   </div>
 
-                  <AdminCheckoutDialog record={record} />
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="gap-2 shrink-0"
+                    onClick={() => setSelectedRecord(record)}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Forzar Salida
+                  </Button>
                 </div>
 
                 {/* Warning messages */}
@@ -187,6 +202,12 @@ export function ActiveStudents({ records }: ActiveStudentsProps) {
           })}
         </div>
       </CardContent>
-    </Card>
+
+      <AdminCheckoutDialog
+        record={selectedRecord}
+        open={!!selectedRecord}
+        onOpenChange={(open) => !open && setSelectedRecord(null)}
+      />
+    </Card >
   )
 }

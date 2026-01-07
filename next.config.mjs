@@ -14,7 +14,8 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true,
+    // Enable image optimization for better mobile performance
+    unoptimized: false,
   },
 }
 
