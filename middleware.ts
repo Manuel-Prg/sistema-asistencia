@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
 export async function middleware(request: NextRequest) {
+
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -27,10 +28,14 @@ export async function middleware(request: NextRequest) {
     },
   )
 
-  // Obtener usuario
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // Helper function para aplicar headers de seguridad
+  const applySecurityHeaders = (response: NextResponse) => {
+    response.headers.set('X-Frame-Options', 'DENY')
+    response.headers.set('X-Content-Type-Options', 'nosniff')
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+    response.headers.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
+    return response
+  }
 
   const pathname = request.nextUrl.pathname
   const isLoginPage = pathname === "/login"
@@ -38,28 +43,48 @@ export async function middleware(request: NextRequest) {
   const isStudentPage = pathname.startsWith("/student")
   const isProtectedRoute = isSupervisorPage || isStudentPage
 
-  // Si no hay usuario y está tratando de acceder a rutas protegidas → redirigir a login
-  if (!user && isProtectedRoute) {
-    const redirectUrl = new URL("/login", request.url)
-    return NextResponse.redirect(redirectUrl)
+  // Obtener usuario
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
+
+  // ✅ SOLO loggear errores en rutas protegidas o cuando hay un error real
+  const ip = request.headers.get('x-forwarded-for') ?? '127.0.0.1'
+  if (error && error.message !== "Auth session missing!" && isProtectedRoute) {
+    console.warn(`[Security] Auth error from ${ip} on ${pathname}: ${error.message}`)
   }
 
-  // Si hay usuario y está en login → redirigir según su rol
+  // Si no hay usuario y está tratando de acceder a rutas protegidas
+  if (!user && isProtectedRoute) {
+    const redirectUrl = new URL("/login", request.url)
+    const response = NextResponse.redirect(redirectUrl)
+    return applySecurityHeaders(response)
+  }
+
+  // Si hay usuario y está en login
   if (user && isLoginPage) {
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", user.id)
       .single()
 
-    if (profile?.role === "supervisor") {
-      return NextResponse.redirect(new URL("/supervisor", request.url))
-    } else {
-      return NextResponse.redirect(new URL("/student", request.url))
+    if (profileError) {
+      console.error(`[Security] Profile fetch error for user ${user.id}:`, profileError)
+      const response = NextResponse.redirect(new URL("/login", request.url))
+      return applySecurityHeaders(response)
     }
+
+    const redirectUrl = profile?.role === "supervisor"
+      ? new URL("/supervisor", request.url)
+      : new URL("/student", request.url)
+
+    const response = NextResponse.redirect(redirectUrl)
+    return applySecurityHeaders(response)
   }
 
-  // Si hay usuario en ruta protegida → verificar que tenga el rol correcto
+  // Si hay usuario en ruta protegida
   if (user && isProtectedRoute) {
     const { data: profile } = await supabase
       .from("profiles")
@@ -67,31 +92,29 @@ export async function middleware(request: NextRequest) {
       .eq("id", user.id)
       .single()
 
-    if (profile) {
-      // Supervisor tratando de acceder a student → redirigir a supervisor
-      if (profile.role === "supervisor" && isStudentPage) {
-        return NextResponse.redirect(new URL("/supervisor", request.url))
-      }
-      // Student tratando de acceder a supervisor → redirigir a student
-      if (profile.role === "student" && isSupervisorPage) {
-        return NextResponse.redirect(new URL("/student", request.url))
-      }
+    if (!profile) {
+      const response = NextResponse.redirect(new URL("/login", request.url))
+      return applySecurityHeaders(response)
+    }
+
+    // Verificar rol correcto
+    if (profile.role === "supervisor" && isStudentPage) {
+      const response = NextResponse.redirect(new URL("/supervisor", request.url))
+      return applySecurityHeaders(response)
+    }
+
+    if (profile.role === "student" && isSupervisorPage) {
+      const response = NextResponse.redirect(new URL("/student", request.url))
+      return applySecurityHeaders(response)
     }
   }
 
-  return supabaseResponse
+  // Aplicar headers a la respuesta normal
+  return applySecurityHeaders(supabaseResponse)
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - /api/ (API routes)
-     * - /_next/static (static files)
-     * - /_next/image (image optimization files)
-     * - /favicon.ico, /logo/ (static files)
-     * - .*\\.(?:svg|png|jpg|jpeg|gif|webp)$ (image files)
-     */
     "/((?!api/|_next/static|_next/image|favicon.ico|logo/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 }

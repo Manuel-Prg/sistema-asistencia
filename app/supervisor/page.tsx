@@ -10,23 +10,42 @@ export const fetchCache = 'force-no-store'
 export default async function SupervisorDashboard() {
   const supabase = await getSupabaseServerClient()
 
+  //Agregado !inner para forzar la relación con profiles
   const { data: students } = await supabase
     .from("students")
-    .select("*, profile:profiles(*)")
+    .select("*, profile:profiles!inner(*)")
     .order("profile(full_name)")
 
+  //Agregado !inner para forzar las relaciones
   const { data: activeRecords } = await supabase
     .from("attendance_records")
-    .select("*, student:students(*, profile:profiles(*))")
+    .select(`
+      *,
+      student:students!inner (
+        *,
+        profile:profiles!inner (*)
+      )
+    `)
     .is("check_out", null)
     .order("check_in", { ascending: false })
 
-  const { data: recentRecords } = await supabase
+  // Agregado !inner para forzar las relaciones
+  const { data: recentRecords, error } = await supabase
     .from("attendance_records")
-    .select("*, student:students(*, profile:profiles(*))")
+    .select(`
+    *,
+    student:students!inner (
+      *,
+      profile:profiles!inner (*)
+    )
+  `)
     .not("check_out", "is", null)
     .order("check_out", { ascending: false })
     .limit(10)
+
+  if (error) {
+    console.error('[Dashboard] Error fetching recent records:', error)
+  }
 
   const totalStudents = students?.length || 0
   const activeNow = activeRecords?.length || 0

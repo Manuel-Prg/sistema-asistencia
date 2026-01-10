@@ -6,7 +6,12 @@ import { formatTime } from "@/lib/utils/date-formatter"
 import type { RecentActivityProps } from "@/lib/types/supervisor"
 
 export function RecentActivity({ records }: RecentActivityProps) {
-  if (records.length === 0) {
+  // Ojo: Filtrar records que tengan datos válidos del estudiante
+  const validRecords = records.filter(
+    record => record.student?.profile?.full_name
+  )
+
+  if (validRecords.length === 0) {
     return (
       <Card className="border-0 shadow-xl dark:bg-gray-900">
         <CardHeader className="pb-4 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 border-b border-indigo-100 dark:border-indigo-900">
@@ -44,14 +49,14 @@ export function RecentActivity({ records }: RecentActivityProps) {
           <div>
             <span className="text-base sm:text-lg lg:text-xl dark:text-white">Actividad Reciente</span>
             <span className="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">
-              ({records.length})
+              ({validRecords.length})
             </span>
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3 sm:p-6">
         <div className="space-y-2 sm:space-y-3 max-h-[500px] sm:max-h-[600px] overflow-y-auto pr-1">
-          {records.map((record) => (
+          {validRecords.map((record) => (
             <div
               key={record.id}
               className="group p-3 sm:p-3.5 bg-gradient-to-r from-white to-slate-50 dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-800 transition-all duration-200"
