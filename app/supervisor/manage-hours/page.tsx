@@ -9,7 +9,7 @@ export default async function ManageHoursPage() {
 
   const { data: students } = await supabase
     .from("students")
-    .select("*, profile:profiles(*)")
+    .select("*, profile:profiles!inner(*)")
     .order("profile(full_name)")
 
   return (

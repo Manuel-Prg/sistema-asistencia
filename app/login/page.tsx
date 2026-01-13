@@ -87,7 +87,20 @@ export default function LoginPage() {
       router.push("/")
       router.refresh()
     } catch (err: any) {
-      setError(err.message || "Error al iniciar sesión")
+      // Traducir errores comunes de Supabase al español
+      let errorMessage = "Error al iniciar sesión"
+
+      if (err.message?.includes("Invalid login credentials")) {
+        errorMessage = "Credenciales de inicio de sesión inválidas"
+      } else if (err.message?.includes("Email not confirmed")) {
+        errorMessage = "Por favor confirma tu correo electrónico"
+      } else if (err.message?.includes("Email rate limit exceeded")) {
+        errorMessage = "Demasiados intentos. Por favor espera un momento"
+      } else if (err.message) {
+        errorMessage = err.message
+      }
+
+      setError(errorMessage)
       setLoading(false)
     }
   }

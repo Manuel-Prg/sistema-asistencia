@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Settings, Clock, AlertTriangle, CheckCircle } from "lucide-react"
 import { autoCloseOldRecords, capLongSessions } from "@/app/supervisor/actions"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import { showSuccess, showError } from "@/lib/toast-utils"
 import type { AutoCloseButtonProps } from "@/lib/types/supervisor"
 
 export function AutoCloseButton({ longSessions, oldRecords }: AutoCloseButtonProps) {
@@ -26,10 +26,10 @@ export function AutoCloseButton({ longSessions, oldRecords }: AutoCloseButtonPro
     const result = await capLongSessions()
 
     if (result.success) {
-      toast.success(result.message)
+      showSuccess(result.message || "Sesiones limitadas correctamente")
       router.refresh()
     } else {
-      toast.error(result.error || "Error al limitar sesiones")
+      showError(result.error || "Error al limitar sesiones")
     }
     setLoading(null)
   }
@@ -39,10 +39,10 @@ export function AutoCloseButton({ longSessions, oldRecords }: AutoCloseButtonPro
     const result = await autoCloseOldRecords()
 
     if (result.success) {
-      toast.success(result.message)
+      showSuccess(result.message || "Registros cerrados correctamente")
       router.refresh()
     } else {
-      toast.error(result.error || "Error al cerrar registros")
+      showError(result.error || "Error al cerrar registros")
     }
     setLoading(null)
   }

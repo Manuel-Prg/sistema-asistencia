@@ -5,7 +5,7 @@ import { RefreshCw } from "lucide-react"
 import { useState } from "react"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import { showSuccess, showError } from "@/lib/toast-utils"
 
 export function SyncHoursButton() {
   const [loading, setLoading] = useState(false)
@@ -47,11 +47,11 @@ export function SyncHoursButton() {
         if (updateError) throw updateError
       }
 
-      toast.success("Horas sincronizadas correctamente")
+      showSuccess("Horas sincronizadas correctamente")
       router.refresh()
     } catch (error) {
       console.error("Error syncing hours:", error)
-      toast.error("Error al sincronizar horas")
+      showError("Error al sincronizar horas")
     } finally {
       setLoading(false)
     }

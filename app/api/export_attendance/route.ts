@@ -42,12 +42,12 @@ export async function POST(req: NextRequest) {
 				hours_worked,
 				early_departure_reason,
 				created_at,
-				students:students (
+				students:students!inner (
 					student_type,
 					required_hours,
 					assigned_room,
 					accumulated_hours,
-					profiles:profiles ( email, full_name, role )
+					profiles:profiles!inner ( email, full_name, role )
 				)
 			`)
             .order('check_in', { ascending: true });

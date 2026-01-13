@@ -16,7 +16,7 @@ export default async function StudentsPage() {
   // ✅ Obtener datos frescos sin caché
   const { data: students } = await supabase
     .from("students")
-    .select("*, profile:profiles(*)")
+    .select("*, profile:profiles!inner(*)")
     .order("profile(full_name)")
 
   return (
@@ -34,7 +34,7 @@ export default async function StudentsPage() {
                 Lista completa de estudiantes y su progreso
               </p>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <SyncHoursButton />
               <Link href="/supervisor/users/new">

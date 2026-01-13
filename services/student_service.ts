@@ -9,7 +9,7 @@ export const get_all_students = async (): Promise<StudentWithProfile[]> => {
   try {
     const { data, error } = await getSupabaseBrowserClient()
       .from('students')
-      .select('*, profile:profiles(*)');
+      .select('*, profile:profiles!inner(*)');
 
     if (error) throw new Error(`Error al obtener estudiantes: ${error.message}`);
 
@@ -33,7 +33,7 @@ export const get_student_by_id = async (student_id: string): Promise<StudentWith
 
     const { data, error } = await getSupabaseBrowserClient()
       .from('students')
-      .select('*, profile:profiles(*)')
+      .select('*, profile:profiles!inner(*)')
       .eq('id', student_id)
       .single();
 

@@ -16,13 +16,13 @@ export async function exportToExcel() {
   // Get all students with their profiles
   const { data: students } = await supabase
     .from("students")
-    .select("*, profile:profiles(*)")
+    .select("*, profile:profiles!inner(*)")
     .order("profile(full_name)")
 
   // Get all attendance records
   const { data: records } = await supabase
     .from("attendance_records")
-    .select("*, student:students(*, profile:profiles(*))")
+    .select("*, student:students!inner(*, profile:profiles!inner(*))")
     .order("check_in", { ascending: false })
 
   return { students, records }

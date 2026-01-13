@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import { useState } from "react"
-import { toast } from "sonner"
+import { showSuccess, showError } from "@/lib/toast-utils"
 import { getSupabaseBrowserClient } from "@/lib/supabase/client"
 
 export function ExportButton() {
@@ -123,10 +123,10 @@ export function ExportButton() {
       a.remove()
       window.URL.revokeObjectURL(url)
 
-      toast.success("Exportación completada")
+      showSuccess("Exportación completada")
     } catch (error: any) {
       console.error(error)
-      toast.error(error.message || "Error al exportar datos")
+      showError(error.message || "Error al exportar datos")
     } finally {
       setLoading(false)
     }

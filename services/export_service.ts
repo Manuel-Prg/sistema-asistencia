@@ -20,11 +20,11 @@ export const get_attendance_rows_for_export = async (from_iso: string | null, to
 				hours_worked,
 				early_departure_reason,
 				created_at,
-				students:students (
+				students:students!inner (
 					required_hours,
 					assigned_room,
 					accumulated_hours,
-					profiles:profiles (
+					profiles:profiles!inner (
 						email,
 						full_name,
 						role

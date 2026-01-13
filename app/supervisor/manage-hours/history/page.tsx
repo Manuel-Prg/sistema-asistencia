@@ -41,7 +41,7 @@ export default function AdjustmentsHistoryPage() {
 
       const { data, error: fetchError } = await supabase
         .from('attendance_records')
-        .select('*, student:students(*, profile:profiles(*))')
+        .select('*, student:students!inner(*, profile:profiles!inner(*))')
         .eq('room', 'Ajuste Manual')
         .order('created_at', { ascending: false })
 

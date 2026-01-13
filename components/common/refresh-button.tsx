@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { RefreshCw } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
+import { showSuccess, showError } from "@/lib/toast-utils"
 
 export function RefreshButton() {
   const router = useRouter()
@@ -14,18 +15,20 @@ export function RefreshButton() {
   const handleRefresh = async () => {
     setIsRefreshing(true)
     toast.loading("Actualizando datos...", { id: "refresh" })
-    
+
     try {
       router.refresh()
-      
+
       // Pequeño delay para dar feedback visual
       setTimeout(() => {
         setIsRefreshing(false)
-        toast.success("Datos actualizados", { id: "refresh" })
+        toast.dismiss("refresh")
+        showSuccess("Datos actualizados")
       }, 500)
     } catch (error) {
       setIsRefreshing(false)
-      toast.error("Error al actualizar", { id: "refresh" })
+      toast.dismiss("refresh")
+      showError("Error al actualizar")
     }
   }
 

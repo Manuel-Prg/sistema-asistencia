@@ -7,7 +7,7 @@ export default async function AttendancePage() {
 
   const { data: records } = await supabase
     .from("attendance_records")
-    .select("*, student:students(*, profile:profiles(*))")
+    .select("*, student:students!inner(*, profile:profiles!inner(*))")
     .order("check_in", { ascending: false })
     .limit(50)
 

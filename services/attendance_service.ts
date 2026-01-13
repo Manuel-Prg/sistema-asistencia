@@ -9,7 +9,7 @@ export const get_all_attendance_records = async (): Promise<AttendanceWithStuden
   try {
     const { data, error } = await getSupabaseBrowserClient()
       .from('attendance_records')
-      .select('*, student:students(*, profile:profiles(*))');
+      .select('*, student:students!inner(*, profile:profiles!inner(*))');
 
     if (error) throw new Error(`Error al obtener registros: ${error.message}`);
 
