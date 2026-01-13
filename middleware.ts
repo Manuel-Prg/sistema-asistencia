@@ -39,6 +39,9 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
   const isLoginPage = pathname === "/login"
+  const isPublicAuthRoute = pathname === "/login" ||
+    pathname === "/forgot-password" ||
+    pathname === "/reset-password"
   const isSupervisorPage = pathname.startsWith("/supervisor")
   const isStudentPage = pathname.startsWith("/student")
   const isProtectedRoute = isSupervisorPage || isStudentPage
@@ -55,7 +58,7 @@ export async function middleware(request: NextRequest) {
     console.warn(`[Security] Auth error from ${ip} on ${pathname}: ${error.message}`)
   }
 
-  // Si no hay usuario y está tratando de acceder a rutas protegidas
+  // Si no hay usuario y está tratando de acceder a rutas protegidas (NO rutas públicas de auth)
   if (!user && isProtectedRoute) {
     const redirectUrl = new URL("/login", request.url)
     const response = NextResponse.redirect(redirectUrl)
