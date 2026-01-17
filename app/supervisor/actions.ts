@@ -219,33 +219,13 @@ export async function adjustStudentHours(
       return { success: false, error: "Estudiante no encontrado" }
     }
 
-    // Calcular nuevas horas
-    const newHours = Number(student.accumulated_hours) + Number(hoursAdjustment)
-
-    if (newHours < 0) {
-      return {
-        success: false,
-        error: "El ajuste resultaría en horas negativas",
-      }
-    }
-
-    // Actualizar horas del estudiante
-    const { error: updateError } = await supabase
-      .from("students")
-      .update({ accumulated_hours: newHours })
-      .eq("id", studentId)
-
-    if (updateError) {
-      console.error("Error al actualizar horas:", updateError)
-      return { success: false, error: "Error al actualizar horas" }
-    }
-
     // Obtener el turno actual para el registro
     const now = new Date()
     const hour = now.getHours()
     const shift = hour < 14 ? "matutino" : "vespertino"
 
     // Crear registro de asistencia con el ajuste
+    // Permitimos horas negativas para que el trigger actualice correctamente el total
     const adjustmentType = hoursAdjustment > 0 ? "SUMA" : "RESTA"
     const { error: recordError } = await supabase
       .from("attendance_records")
@@ -255,13 +235,13 @@ export async function adjustStudentHours(
         check_out: now.toISOString(),
         shift: shift,
         room: "Ajuste Manual",
-        hours_worked: Math.abs(hoursAdjustment),
+        hours_worked: hoursAdjustment, // Permitir valor negativo
         early_departure_reason: `${adjustmentType}: ${reason}`,
       })
 
     if (recordError) {
       console.error("Error al crear registro:", recordError)
-      // No retornamos error porque las horas ya se actualizaron correctamente
+      return { success: false, error: "Error al crear registro de ajuste" }
     }
 
     // Revalidar todas las rutas relevantes
