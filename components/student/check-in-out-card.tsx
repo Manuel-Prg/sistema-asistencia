@@ -26,6 +26,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { EarlyDepartureDialog } from "./early-departure-dialog";
 import type { CheckInOutCardProps } from "@/lib/types/student";
+import { getMexicoCityTime } from "@/lib/utils";
 
 
 const ROOMS = [
@@ -148,7 +149,7 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
                       <Clock className="h-4 w-4 mt-0.5 flex-shrink-0" />
                       <span>
                         {format(
-                          new Date(activeRecord.check_in),
+                          getMexicoCityTime(activeRecord.check_in),
                           "EEEE, d 'de' MMMM 'a las' HH:mm",
                           { locale: es }
                         )}

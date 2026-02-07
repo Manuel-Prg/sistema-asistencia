@@ -2,9 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar, Clock, MapPin, Sun, Moon } from "lucide-react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
-import type { AttendanceRecord } from "@/lib/supabase/types"
 import type { AttendanceHistoryProps } from "@/lib/types/student"
-
+import { getMexicoCityTime } from "@/lib/utils"
 
 export function AttendanceHistory({ records }: AttendanceHistoryProps) {
   if (records.length === 0) {
@@ -71,7 +70,7 @@ export function AttendanceHistory({ records }: AttendanceHistoryProps) {
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
                       <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white capitalize">
-                        {format(new Date(record.check_in), "EEEE, d 'de' MMMM", { locale: es })}
+                        {format(getMexicoCityTime(record.check_in), "EEEE, d 'de' MMMM", { locale: es })}
                       </p>
                     </div>
 
@@ -81,9 +80,9 @@ export function AttendanceHistory({ records }: AttendanceHistoryProps) {
                       <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
                         <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
                         <span className="truncate">
-                          {format(new Date(record.check_in), "HH:mm", { locale: es })}
+                          {format(getMexicoCityTime(record.check_in), "HH:mm", { locale: es })}
                           {record.check_out && (
-                            <> - {format(new Date(record.check_out), "HH:mm", { locale: es })}</>
+                            <> - {format(getMexicoCityTime(record.check_out), "HH:mm", { locale: es })}</>
                           )}
                         </span>
                       </div>
