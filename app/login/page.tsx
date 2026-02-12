@@ -69,33 +69,68 @@ export default function LoginPage() {
     }
   }
 
+  // Función auxiliar con retry logic
+  const signInWithRetry = async (attempt = 0): Promise<{ error: any }> => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      return { error }
+    } catch (err) {
+      if (attempt < 3) {
+        // Backoff exponencial: 1s, 2s, 4s
+        const delay = Math.pow(2, attempt) * 1000
+        await new Promise((resolve) => setTimeout(resolve, delay))
+        return signInWithRetry(attempt + 1)
+      }
+      return { error: err }
+    }
+  }
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
     try {
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+      const { error: authError } = await signInWithRetry()
 
       if (authError) {
+        // Si es error de rate limit o conexión, mostrar mensaje específico
+        if (
+          authError.message?.includes("rate") ||
+          authError.message?.includes("too many") ||
+          authError.message?.includes("522") ||
+          authError.message?.includes("504")
+        ) {
+          throw new Error("Demasiados intentos o error de conexión. Por favor espera un momento e intenta de nuevo.")
+        }
         throw authError
       }
 
       router.push("/")
       router.refresh()
     } catch (err: any) {
-      // Traducir errores comunes de Supabase al español
       let errorMessage = "Error al iniciar sesión"
 
       if (err.message?.includes("Invalid login credentials")) {
         errorMessage = "Credenciales de inicio de sesión inválidas"
       } else if (err.message?.includes("Email not confirmed")) {
         errorMessage = "Por favor confirma tu correo electrónico"
-      } else if (err.message?.includes("Email rate limit exceeded")) {
-        errorMessage = "Demasiados intentos. Por favor espera un momento"
+      } else if (
+        err.message?.includes("rate") ||
+        err.message?.includes("too many") ||
+        err.message?.includes("Demasiados")
+      ) {
+        errorMessage = "Demasiados intentos. Por favor espera unos minutos e intenta de nuevo"
+      } else if (
+        err.message?.includes("Failed to fetch") ||
+        err.message?.includes("522") ||
+        err.message?.includes("504") ||
+        err.message?.includes("connection")
+      ) {
+        errorMessage = "Error de conexión con el servidor. Verifica tu red e intenta de nuevo."
       } else if (err.message) {
         errorMessage = err.message
       }
