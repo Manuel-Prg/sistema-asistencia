@@ -1,4 +1,3 @@
-// app/login/page.tsx
 "use client"
 
 import type React from "react"
@@ -13,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ClipboardCheck, Users, Clock, Eye, EyeOff } from "lucide-react"
 import type { ActiveStudent } from "@/lib/types/app"
+import { loginAction } from "./actions"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -69,7 +69,6 @@ export default function LoginPage() {
     }
   }
 
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -79,21 +78,24 @@ export default function LoginPage() {
     formData.append("email", email)
     formData.append("password", password)
 
-    // Usamos Server Action en lugar de cliente directo
-    // Esto evita el bloqueo 522 si el servidor de Vercel sí tiene acceso
-    import("./actions").then(async ({ loginAction }) => {
-      try {
-        const result = await loginAction(formData)
-        if (result?.error) {
-          setError(result.error)
-          setLoading(false)
-        }
-        // Si no hay error, el action hace redirect
-      } catch (err: any) {
+    try {
+      const result = await loginAction(formData)
+      if (result?.error) {
+        setError(result.error)
         setLoading(false)
-        setError("Error de conexión al intentar iniciar sesión (Server Action).")
       }
-    })
+      // Si no hay error, el action hace redirect
+    } catch (err: any) {
+      console.error("Login action error:", err)
+
+      let msg = "Error de conexión al intentar iniciar sesión."
+      if (err.message && err.message.includes("Unexpected token")) {
+        msg = "Error crítico del servidor (500/504). El servicio de base de datos podría estar caído o pausado."
+      }
+
+      setError(msg)
+      setLoading(false)
+    }
   }
 
   const formatTime = (isoString: string) => {
