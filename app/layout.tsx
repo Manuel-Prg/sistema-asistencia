@@ -26,6 +26,8 @@ export const metadata: Metadata = {
   },
 }
 
+import { MaintenanceBanner } from '@/components/maintenance-banner'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,6 +42,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <MaintenanceBanner />
           {children}
         </ThemeProvider>
         <Toaster
