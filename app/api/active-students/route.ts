@@ -66,7 +66,11 @@ export async function GET(request: Request) {
       .order("check_in", { ascending: false })
 
     if (error) {
-      return NextResponse.json({ error: error.message, activeStudents: [] })
+      console.error("Database error in active-students:", error)
+      return NextResponse.json(
+        { error: error.message, activeStudents: [] },
+        { status: 500 }
+      )
     }
 
     const formatted = data?.map((r: any) => ({
