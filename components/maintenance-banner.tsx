@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 
 export function MaintenanceBanner() {
     // Inicializamos en true para asegurar que se muestre, pero controlamos la hidratación
-    const [isDown, setIsDown] = useState(true)
+    const [isDown, setIsDown] = useState(false)
     const [lastCheck, setLastCheck] = useState<Date | null>(null)
     const [isMounted, setIsMounted] = useState(false)
 
@@ -24,13 +24,7 @@ export function MaintenanceBanner() {
 
                 // Solo ocultamos si explícitamente dice "none"
                 // indicator values: none, minor, major, critical
-                // MODIFICACIÓN: Forzamos visualización si el usuario reporta problemas aunque la API diga "none"
-                // Para producción normal descomentar la línea de abajo y comentar la siguiente
-                // setIsDown(data.status.indicator !== 'none')
-
-                // MODO INCIDENTE ACTIVO: Forzamos visualización
-                const isSystemDown = data.status.indicator !== 'none'
-                setIsDown(isSystemDown || true)
+                setIsDown(data.status.indicator !== 'none')
 
                 setLastCheck(new Date())
             } catch {
