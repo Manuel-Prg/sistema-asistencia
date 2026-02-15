@@ -80,9 +80,9 @@ export function AttendanceHistory({ records }: AttendanceHistoryProps) {
                       <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
                         <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
                         <span className="truncate">
-                          {format(getMexicoCityTime(record.check_in), "HH:mm", { locale: es })}
+                          {format(getMexicoCityTime(record.check_in), "hh:mm a", { locale: es })}
                           {record.check_out && (
-                            <> - {format(getMexicoCityTime(record.check_out), "HH:mm", { locale: es })}</>
+                            <> - {format(getMexicoCityTime(record.check_out), "hh:mm a", { locale: es })}</>
                           )}
                         </span>
                       </div>

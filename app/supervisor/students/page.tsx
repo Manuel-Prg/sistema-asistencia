@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { UserPlus } from "lucide-react"
 import Link from "next/link"
 
-// ✅ CRÍTICO: Deshabilitar caché completamente
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 export const fetchCache = 'force-no-store'
@@ -13,7 +12,6 @@ export const fetchCache = 'force-no-store'
 export default async function StudentsPage() {
   const supabase = await getSupabaseServerClient()
 
-  // ✅ Obtener datos frescos sin caché
   const { data: students } = await supabase
     .from("students")
     .select("*, profile:profiles!inner(*)")

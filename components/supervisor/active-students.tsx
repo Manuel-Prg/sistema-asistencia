@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge"
 import { UserCheck, Clock, AlertTriangle } from "lucide-react"
 import { formatTime } from "@/lib/utils/date-formatter"
 import { AdminCheckoutDialog } from "./admin-checkout-dialog"
-import { AutoCloseButton } from "./auto-close-button"
 import type { ActiveStudentsProps } from "@/lib/types/supervisor"
 
 import { useState } from "react"
@@ -73,14 +72,6 @@ export function ActiveStudents({ records }: ActiveStudentsProps) {
               </span>
             </div>
           </CardTitle>
-
-          {/* Auto-close buttons */}
-          <div className="shrink-0">
-            <AutoCloseButton
-              longSessions={longSessions.length}
-              oldRecords={oldRecords.length}
-            />
-          </div>
         </div>
 
         {/* Warnings */}

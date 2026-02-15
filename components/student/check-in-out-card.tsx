@@ -150,7 +150,7 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
                       <span>
                         {format(
                           getMexicoCityTime(activeRecord.check_in),
-                          "EEEE, d 'de' MMMM 'a las' HH:mm",
+                          "EEEE, d 'de' MMMM 'a las' hh:mm a",
                           { locale: es }
                         )}
                       </span>
