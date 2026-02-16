@@ -19,6 +19,7 @@ import { AlertCircle, LogOut, Clock } from "lucide-react"
 import { forceCheckOut } from "@/app/supervisor/actions"
 import { useRouter } from "next/navigation"
 import { formatDateTime } from "@/lib/utils/date-formatter"
+import { showSuccess, showError } from "@/lib/toast-utils"
 interface AdminCheckoutDialogProps {
   record: any // Using any to match existing usage, ideally should be typed
   open: boolean
@@ -45,8 +46,9 @@ export function AdminCheckoutDialog({ record, open, onOpenChange }: AdminCheckou
       onOpenChange(false)
       setReason("")
       router.refresh()
+      showSuccess("Salida forzada registrada correctamente")
     } else {
-      alert(result.error || "Error al forzar salida")
+      showError(result.error || "Error al forzar salida")
     }
     setLoading(false)
   }

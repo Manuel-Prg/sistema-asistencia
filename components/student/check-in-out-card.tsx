@@ -27,6 +27,7 @@ import { es } from "date-fns/locale";
 import { EarlyDepartureDialog } from "./early-departure-dialog";
 import type { CheckInOutCardProps } from "@/lib/types/student";
 import { getMexicoCityTime } from "@/lib/utils";
+import { showSuccess, showError } from "@/lib/toast-utils";
 
 
 const ROOMS = [
@@ -45,25 +46,23 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
   const [shift, setShift] = useState<"matutino" | "vespertino" | "completo">("matutino");
   const [room, setRoom] = useState<string>(ROOMS[0]);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
+  // const [message, setMessage] = useState<{ type: "success" | "error"; text: string; } | null>(null); // Removed
   const [showEarlyDepartureDialog, setShowEarlyDepartureDialog] =
     useState(false);
   const [calculatedHours, setCalculatedHours] = useState(0);
 
   const handleCheckIn = async () => {
     setLoading(true);
-    setMessage(null);
+    // setMessage(null); // Removed
 
     const result = await checkIn(room, shift);
 
     if (result.error) {
-      setMessage({ type: "error", text: result.error });
+      showError(result.error);
       setLoading(false);
     } else {
-      setMessage({ type: "success", text: "Entrada registrada exitosamente" });
+      showSuccess("Entrada registrada exitosamente");
+      // setMessage({ type: "success", text: "Entrada registrada exitosamente" }); // Removed
       setTimeout(() => {
         router.refresh();
         setLoading(false);
@@ -79,7 +78,7 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
     const hoursWorked =
       (checkOutTime.getTime() - checkInTime.getTime()) / (1000 * 60 * 60);
 
-    // ✅ CAMBIO: Ahora son 3 horas mínimas en lugar de 4
+    //  CAMBIO: Ahora son 3 horas mínimas en lugar de 4
     if (hoursWorked < 3) {
       setCalculatedHours(hoursWorked);
       setShowEarlyDepartureDialog(true);
@@ -91,20 +90,16 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
 
   const performCheckOut = async (earlyDepartureReason?: string) => {
     setLoading(true);
-    setMessage(null);
+    // setMessage(null); // Removed
 
     const result = await checkOut(earlyDepartureReason);
 
     if (result.error) {
-      setMessage({ type: "error", text: result.error });
+      showError(result.error);
       setLoading(false);
     } else {
-      setMessage({
-        type: "success",
-        text: `Salida registrada. Trabajaste ${result.hoursWorked?.toFixed(
-          2
-        )} horas`,
-      });
+      showSuccess(`Salida registrada. Trabajaste ${result.hoursWorked?.toFixed(2)} horas`);
+      // setMessage(...); // Removed
       setTimeout(() => {
         router.refresh();
         setLoading(false);
@@ -292,20 +287,7 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
             </div>
           )}
 
-          {message && (
-            <Alert
-              variant={message.type === "error" ? "destructive" : "default"}
-              className={
-                message.type === "success"
-                  ? "border-emerald-200 bg-emerald-50 dark:bg-emerald-950 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200"
-                  : ""
-              }
-            >
-              <AlertDescription className="text-sm sm:text-base">
-                {message.text}
-              </AlertDescription>
-            </Alert>
-          )}
+          {/* Message Alert Removed */}
         </CardContent>
       </Card>
 

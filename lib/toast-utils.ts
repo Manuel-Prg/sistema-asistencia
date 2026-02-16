@@ -1,40 +1,56 @@
 // lib/toast-utils.ts
-import { toast } from "sonner"
-import { CheckCircle2, XCircle, AlertCircle, Info } from "lucide-react"
+import { sileo } from "sileo"
 
 /**
- * Utilidades para mostrar notificaciones con diseño mejorado
+ * Utilidades para mostrar notificaciones con diseño mejorado usando Sileo
  */
 
 export const showSuccess = (message: string) => {
-    toast.success(message, {
-        duration: 4000,
-        icon: "✓",
-        className: "toast-success",
+    sileo.success({
+        title: "Éxito",
+        description: message,
+        // Use CSS variable for background to adapt to theme
+        fill: "var(--color-card)",
+        styles: {
+            title: "text-green-600 dark:text-green-400 font-bold text-base",
+            description: "text-foreground font-medium text-sm",
+        }
     })
 }
 
 export const showError = (message: string) => {
-    toast.error(message, {
-        duration: 5000,
-        icon: "✕",
-        className: "toast-error",
+    sileo.error({
+        title: "Error",
+        description: message,
+        fill: "var(--color-card)",
+        styles: {
+            title: "text-red-600 dark:text-red-400 font-bold text-base",
+            description: "text-foreground font-medium text-sm",
+        }
     })
 }
 
 export const showWarning = (message: string) => {
-    toast.warning(message, {
-        duration: 4500,
-        icon: "⚠",
-        className: "toast-warning",
+    sileo.warning({
+        title: "Advertencia",
+        description: message,
+        fill: "var(--color-card)",
+        styles: {
+            title: "text-amber-600 dark:text-amber-400 font-bold text-base",
+            description: "text-foreground font-medium text-sm",
+        }
     })
 }
 
 export const showInfo = (message: string) => {
-    toast.info(message, {
-        duration: 4000,
-        icon: "ℹ",
-        className: "toast-info",
+    sileo.info({
+        title: "Información",
+        description: message,
+        fill: "var(--color-card)",
+        styles: {
+            title: "text-blue-600 dark:text-blue-400 font-bold text-base",
+            description: "text-foreground font-medium text-sm",
+        }
     })
 }
 

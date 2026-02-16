@@ -1,6 +1,6 @@
 // app/supervisor/layout.tsx
 import type React from "react"
-import { Toaster } from "sonner"
+
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { SupervisorNav } from "@/components/supervisor/supervisor-nav"
@@ -36,12 +36,6 @@ export default async function SupervisorLayout({
       <SupervisorNav userName={profile.full_name} />
       <main className="container mx-auto px-4 py-6">{children}</main>
       <Footer />
-      <Toaster 
-        position="top-right"
-        richColors
-        closeButton
-        duration={4000} 
-      />
     </div>
   )
 }

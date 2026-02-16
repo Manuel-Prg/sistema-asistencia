@@ -259,3 +259,19 @@
 [data-sonner-toast][data-removed="true"] {
   animation: toast-slide-out 0.2s cubic-bezier(0.06, 0.71, 0.55, 1) forwards;
 }
+
+/* Sileo Overrides for Theme Adaptation */
+/* This ensures the svg icons inside Sileo use the correct colors */
+:root {
+  --sileo-error: #ef4444;
+  --sileo-success: #22c55e;
+  --sileo-warning: #f59e0b;
+  --sileo-info: #3b82f6;
+}
+
+.dark {
+  --sileo-error: #f87171;
+  --sileo-success: #4ade80;
+  --sileo-warning: #fbbf24;
+  --sileo-info: #60a5fa;
+}

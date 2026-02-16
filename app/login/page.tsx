@@ -2,7 +2,8 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
+import { showSuccess, showError } from "@/lib/toast-utils"
 import Image from "next/image"
 import { getSupabaseBrowserClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -17,8 +18,8 @@ import { loginAction } from "./actions"
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [activeStudents, setActiveStudents] = useState<ActiveStudent[]>([])
   const [loadingStudents, setLoadingStudents] = useState(true)
@@ -72,7 +73,7 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
+    // setError(null)
 
     const formData = new FormData()
     formData.append("email", email)
@@ -80,11 +81,12 @@ export default function LoginPage() {
 
     try {
       const result = await loginAction(formData)
+
       if (result?.error) {
-        setError(result.error)
+        showError(result.error)
         setLoading(false)
       }
-      // Si no hay error, el action hace redirect
+      // If no error, redirect happens automatically via server action
     } catch (err: any) {
       console.error("Login action error:", err)
 
@@ -93,7 +95,7 @@ export default function LoginPage() {
         msg = "Error crítico del servidor (500/504). El servicio de base de datos podría estar caído o pausado."
       }
 
-      setError(msg)
+      showError(msg)
       setLoading(false)
     }
   }
@@ -197,12 +199,6 @@ export default function LoginPage() {
                     </a>
                   </div>
                 </div>
-
-                {error && (
-                  <Alert variant="destructive" className="border-red-300 bg-red-50 dark:bg-red-950 dark:border-red-900">
-                    <AlertDescription className="text-red-800 dark:text-red-200">{error}</AlertDescription>
-                  </Alert>
-                )}
 
                 <Button
                   type="submit"

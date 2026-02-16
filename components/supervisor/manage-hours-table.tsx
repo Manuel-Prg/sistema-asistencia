@@ -18,6 +18,7 @@ import { Search, Plus, Minus, History, AlertCircle } from "lucide-react"
 import { adjustStudentHours } from "@/app/supervisor/actions"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Link from "next/link"
+import { showSuccess, showError } from "@/lib/toast-utils"
 
 interface Student {
   id: string
@@ -38,8 +39,8 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
   const [hours, setHours] = useState("")
   const [reason, setReason] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState("")
-  const [successMessage, setSuccessMessage] = useState("")
+  // const [error, setError] = useState("") // Removed
+  // const [successMessage, setSuccessMessage] = useState("") // Removed
 
   const filteredStudents = students.filter((student) => {
     const searchLower = searchTerm.toLowerCase()
@@ -51,16 +52,12 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
     setAdjustmentType(type)
     setHours("")
     setReason("")
-    setError("")
-    setSuccessMessage("")
   }
 
   const handleCloseDialog = () => {
     setSelectedStudent(null)
     setHours("")
     setReason("")
-    setError("")
-    setSuccessMessage("")
   }
 
   const handleSubmit = async () => {
@@ -69,29 +66,29 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
     // Validaciones
     const hoursNum = parseFloat(hours)
     if (isNaN(hoursNum) || hoursNum <= 0) {
-      setError("Por favor ingresa un número válido de horas mayor a 0")
+      showError("Por favor ingresa un número válido de horas mayor a 0")
       return
     }
 
     if (hoursNum > 100) {
-      setError("El ajuste no puede ser mayor a 100 horas")
+      showError("El ajuste no puede ser mayor a 100 horas")
       return
     }
 
     if (!reason.trim()) {
-      setError("Por favor proporciona una razón para el ajuste")
+      showError("Por favor proporciona una razón para el ajuste")
       return
     }
 
     if (reason.trim().length < 10) {
-      setError("La razón debe tener al menos 10 caracteres")
+      showError("La razón debe tener al menos 10 caracteres")
       return
     }
 
     // Verificar que no se reste más de lo que tiene
     if (adjustmentType === "subtract") {
       if (hoursNum > selectedStudent.accumulated_hours) {
-        setError(
+        showError(
           `No se pueden restar ${hoursNum}h. El estudiante solo tiene ${selectedStudent.accumulated_hours.toFixed(1)}h acumuladas`
         )
         return
@@ -99,13 +96,13 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
     }
 
     setIsSubmitting(true)
-    setError("")
-    setSuccessMessage("")
+    // setError("") // Removed state
+    // setSuccessMessage("") // Removed state
 
     try {
       const hoursToAdjust = adjustmentType === "subtract" ? -hoursNum : hoursNum
 
-      console.log(`📤 Submitting adjustment: ${adjustmentType === "add" ? "+" : ""}${hoursToAdjust}h for ${selectedStudent.profile.full_name}`)
+      console.log(` Submitting adjustment: ${adjustmentType === "add" ? "+" : ""}${hoursToAdjust}h for ${selectedStudent.profile.full_name}`)
 
       const result = await adjustStudentHours(
         selectedStudent.id,
@@ -114,20 +111,21 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
       )
 
       if (result.success) {
-        console.log('✅ Adjustment successful, reloading page...')
-        setSuccessMessage("✅ Ajuste realizado correctamente. Recargando datos...")
+        console.log(' Adjustment successful, reloading page...')
+        showSuccess("Ajuste realizado correctamente. Recargando datos...")
+        // setSuccessMessage(...) // Removed
 
         // Esperar 2 segundos para asegurar que se guardó
         setTimeout(() => {
           window.location.reload()
         }, 2000)
       } else {
-        console.error('❌ Adjustment failed:', result.error)
-        setError(result.error || "Error al realizar el ajuste")
+        console.error(' Adjustment failed:', result.error)
+        showError(result.error || "Error al realizar el ajuste")
       }
     } catch (err: any) {
-      console.error('❌ Adjustment exception:', err)
-      setError(`Error: ${err.message || "Error al procesar la solicitud"}`)
+      console.error(' Adjustment exception:', err)
+      showError(`Error: ${err.message || "Error al procesar la solicitud"}`)
     } finally {
       setIsSubmitting(false)
     }
@@ -238,19 +236,7 @@ export function ManageHoursTable({ students }: ManageHoursTableProps) {
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            {error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            {successMessage && (
-              <Alert className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{successMessage}</AlertDescription>
-              </Alert>
-            )}
+            {/* Removed inline alerts */}
 
             <div className="space-y-2">
               <Label htmlFor="hours">

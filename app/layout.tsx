@@ -5,7 +5,8 @@ import { GeistMono } from 'geist/font/mono'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
-import { Toaster } from 'sonner'
+import { Toaster } from 'sileo'
+import 'sileo/styles.css'
 // import SnowAnimation from '@/components/snow-animation'
 
 
@@ -45,13 +46,7 @@ export default function RootLayout({
           <MaintenanceBanner />
           {children}
         </ThemeProvider>
-        <Toaster
-          position="top-right"
-          expand={false}
-          richColors
-          closeButton
-          duration={4000}
-        />
+        <Toaster position="top-center" options={{ roundness: 12, duration: 4000 }} />
         <Analytics />
         {/* <SnowAnimation /> */}
       </body>

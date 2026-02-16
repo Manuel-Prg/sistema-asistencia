@@ -10,12 +10,13 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ArrowLeft, UserPlus, Mail, Lock, User, Users, Clock } from "lucide-react"
 import Link from "next/link"
 import { createNewUser } from "./action"
+import { showSuccess, showError } from "@/lib/toast-utils"
 
 export default function NewUserPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  // const [error, setError] = useState<string | null>(null) // Removed
+  // const [success, setSuccess] = useState(false) // Removed
 
   const [formData, setFormData] = useState({
     email: "",
@@ -29,8 +30,8 @@ export default function NewUserPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
-    setSuccess(false)
+    // setError(null) // Removed
+    // setSuccess(false) // Removed
 
     try {
       const result = await createNewUser(formData)
@@ -39,7 +40,9 @@ export default function NewUserPage() {
         throw new Error(result.error)
       }
 
-      setSuccess(true)
+      showSuccess("Usuario creado exitosamente. Redirigiendo...")
+      // setSuccess(true) // Removed
+
       setFormData({
         email: "",
         password: "",
@@ -53,7 +56,8 @@ export default function NewUserPage() {
         router.push("/supervisor/students")
       }, 2000)
     } catch (err: any) {
-      setError(err.message || "Error al crear usuario")
+      showError(err.message || "Error al crear usuario")
+      // setError(err.message || "Error al crear usuario") // Removed
     } finally {
       setLoading(false)
     }
@@ -272,27 +276,7 @@ export default function NewUserPage() {
               )}
 
               {/* Alerts */}
-              {error && (
-                <Alert variant="destructive" className="border-red-200 bg-red-50 dark:bg-red-950 dark:border-red-900">
-                  <AlertDescription className="flex items-center gap-2 text-red-800 dark:text-red-200">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {error}
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              {success && (
-                <Alert className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 text-green-900 dark:text-green-200 border-green-200 dark:border-green-800">
-                  <AlertDescription className="flex items-center gap-2">
-                    <svg className="h-5 w-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Usuario creado exitosamente. Redirigiendo...
-                  </AlertDescription>
-                </Alert>
-              )}
+              {/* Alerts Removed */}
 
               {/* Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
