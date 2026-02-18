@@ -85,8 +85,11 @@ export default function LoginPage() {
       if (result?.error) {
         showError(result.error)
         setLoading(false)
+      } else if (result?.redirectUrl) {
+        // Success! Navigate to the dashboard
+        window.location.href = result.redirectUrl
+        // Keep loading true while the page reloads/navigates
       }
-      // If no error, redirect happens automatically via server action
     } catch (err: any) {
       console.error("Login action error:", err)
 

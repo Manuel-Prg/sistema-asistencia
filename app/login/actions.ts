@@ -4,6 +4,8 @@ import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 
 export async function loginAction(formData: FormData) {
+    let redirectPath: string | null = null;
+
     try {
         const email = formData.get("email") as string
         const password = formData.get("password") as string
@@ -48,14 +50,14 @@ export async function loginAction(formData: FormData) {
         }
 
         if (profile?.role === "supervisor") {
-            redirect("/supervisor")
+            redirectPath = "/supervisor"
         } else {
-            redirect("/student")
+            redirectPath = "/student"
         }
+
+        return { success: true, redirectUrl: redirectPath }
+
     } catch (error: any) {
-        if (error.message === "NEXT_REDIRECT") {
-            throw error; // Re-lanzar para que redirect funcidne
-        }
         console.error("Critical Login Action Error:", error)
         return { error: "Error crítico de conexión con el servidor de autenticación." }
     }
