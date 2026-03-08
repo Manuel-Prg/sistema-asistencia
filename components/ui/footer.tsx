@@ -12,7 +12,7 @@ export function Footer() {
           {/* Links opcionales */}
           <div className="flex items-center gap-4 text-sm">
             <span className="text-gray-500 dark:text-gray-400">
-              Versión 2.5
+              Versión 3.0
             </span>
           </div>
         </div>

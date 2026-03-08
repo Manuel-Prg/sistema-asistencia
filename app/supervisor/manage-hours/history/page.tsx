@@ -21,91 +21,84 @@ interface AdjustmentRecord {
 }
 
 export default function AdjustmentsHistoryPage() {
-  const [adjustments, setAdjustments] = useState<AdjustmentRecord[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [lastUpdate, setLastUpdate] = useState(new Date())
-  const [error, setError] = useState<string | null>(null)
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
+  const [data, setData] = useState<{
+    adjustments: AdjustmentRecord[]
+    error: string | null
+    lastUpdate: Date
+  }>({
+    adjustments: [],
+    error: null,
+    lastUpdate: new Date(),
+  })
+  const [loadState, setLoadState] = useState<{
+    isLoading: boolean
+    isRefreshing: boolean
+    connectionStatus: 'connecting' | 'connected' | 'disconnected'
+  }>({
+    isLoading: true,
+    isRefreshing: false,
+    connectionStatus: 'connecting',
+  })
 
   const supabase = getSupabaseBrowserClient()
 
   // Función para cargar ajustes
   const fetchAdjustments = async (showLoading = false) => {
     try {
-      setError(null)
       if (showLoading) {
-        console.log('🔄 Manual refresh triggered')
-        setIsRefreshing(true)
+        setLoadState(prev => ({ ...prev, isRefreshing: true }))
       }
 
-      const { data, error: fetchError } = await supabase
+      const { data: rows, error: fetchError } = await supabase
         .from('attendance_records')
         .select('*, student:students!inner(*, profile:profiles!inner(*))')
         .eq('room', 'Ajuste Manual')
         .order('created_at', { ascending: false })
 
       if (fetchError) {
-        console.error('❌ Error fetching adjustments:', fetchError)
-        setError(`Error: ${fetchError.message}`)
+        setData(prev => ({ ...prev, error: `Error: ${fetchError.message}` }))
         return
       }
 
-      console.log(`✅ Loaded ${data?.length || 0} adjustments`)
-      setAdjustments(data || [])
-      setLastUpdate(new Date())
-    } catch (error: any) {
-      console.error('❌ Exception:', error)
-      setError(`Exception: ${error.message}`)
+      setData({ adjustments: rows || [], error: null, lastUpdate: new Date() })
+    } catch (err: any) {
+      setData(prev => ({ ...prev, error: `Exception: ${err.message}` }))
     } finally {
-      if (showLoading) setIsRefreshing(false)
-      setIsLoading(false)
+      setLoadState(prev => ({ ...prev, isLoading: false, isRefreshing: false }))
     }
   }
 
-  // Cargar datos iniciales
+  // Load initial data
   useEffect(() => {
-    console.log('🚀 Component mounted, loading initial data...')
     fetchAdjustments()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Suscripción en tiempo real (la única actualización automática)
+  // Real-time subscription
   useEffect(() => {
-    console.log('📡 Setting up real-time subscription...')
-    setConnectionStatus('connecting')
+    setLoadState(prev => ({ ...prev, connectionStatus: 'connecting' }))
 
     const channel = supabase
       .channel('attendance_adjustments_realtime')
       .on(
         'postgres_changes',
         {
-          event: '*', // INSERT, UPDATE, DELETE
+          event: '*',
           schema: 'public',
           table: 'attendance_records',
           filter: 'room=eq.Ajuste Manual',
         },
-        (payload: { eventType: any; new: { id: any } }) => {
-          console.log('🔔 Real-time update received:', payload.eventType, payload.new?.id)
-          // Recargar datos cuando hay cambios
-          fetchAdjustments()
-        }
+        () => { fetchAdjustments() }
       )
       .subscribe((status: string) => {
-        console.log('📡 Subscription status:', status)
         if (status === 'SUBSCRIBED') {
-          setConnectionStatus('connected')
-          console.log('✅ Real-time connection established')
+          setLoadState(prev => ({ ...prev, connectionStatus: 'connected' }))
         } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
-          setConnectionStatus('disconnected')
-          console.warn('⚠️ Real-time connection lost')
+          setLoadState(prev => ({ ...prev, connectionStatus: 'disconnected' }))
         }
       })
 
-    return () => {
-      console.log('📡 Cleaning up real-time subscription...')
-      channel.unsubscribe()
-    }
-  }, [])
+    return () => { channel.unsubscribe() }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString)
@@ -118,13 +111,7 @@ export default function AdjustmentsHistoryPage() {
     })
   }
 
-  const formatLastUpdate = () => {
-    return lastUpdate.toLocaleTimeString('es-MX', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    })
-  }
+
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -148,12 +135,12 @@ export default function AdjustmentsHistoryPage() {
             variant="outline"
             size="sm"
             onClick={() => fetchAdjustments(true)}
-            disabled={isRefreshing}
+            disabled={loadState.isRefreshing}
             className="gap-2 flex-1 sm:flex-initial"
           >
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span className="hidden xs:inline">{isRefreshing ? 'Actualizando...' : 'Actualizar'}</span>
-            <span className="xs:hidden">{isRefreshing ? '...' : ''}</span>
+            <RefreshCw className={`h-4 w-4 ${loadState.isRefreshing ? 'animate-spin' : ''}`} />
+            <span className="hidden xs:inline">{loadState.isRefreshing ? 'Actualizando...' : 'Actualizar'}</span>
+            <span className="xs:hidden">{loadState.isRefreshing ? '...' : ''}</span>
           </Button>
           <Link href="/supervisor/manage-hours" className="flex-1 sm:flex-initial">
             <Button variant="outline" size="sm" className="gap-2 w-full">
@@ -164,16 +151,16 @@ export default function AdjustmentsHistoryPage() {
         </div>
       </div>
 
-      {/* Indicador de estado de conexión - Responsive */}
+      {/* Status indicator */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs">
         <div className="text-gray-500 dark:text-gray-400 order-2 sm:order-1">
           <span className="hidden sm:inline">Última actualización: </span>
           <span className="sm:hidden">Actualizado: </span>
-          <span className="font-mono">{formatLastUpdate()}</span>
+          <span className="font-mono">{data.lastUpdate.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
         </div>
 
         <div className="flex items-center gap-2 order-1 sm:order-2">
-          {connectionStatus === 'connected' && (
+          {loadState.connectionStatus === 'connected' && (
             <div className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
               <span className="relative flex h-2 w-2 flex-shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -185,13 +172,13 @@ export default function AdjustmentsHistoryPage() {
               </span>
             </div>
           )}
-          {connectionStatus === 'connecting' && (
+          {loadState.connectionStatus === 'connecting' && (
             <div className="flex items-center gap-1.5 text-yellow-600 dark:text-yellow-400">
               <RefreshCw className="h-3 w-3 animate-spin flex-shrink-0" />
               <span className="text-xs sm:text-sm">Conectando...</span>
             </div>
           )}
-          {connectionStatus === 'disconnected' && (
+          {loadState.connectionStatus === 'disconnected' && (
             <div className="flex items-center gap-1.5 text-red-600 dark:text-red-400">
               <AlertCircle className="h-3 w-3 flex-shrink-0" />
               <span className="text-xs sm:text-sm">Desconectado</span>
@@ -200,12 +187,12 @@ export default function AdjustmentsHistoryPage() {
         </div>
       </div>
 
-      {/* Error Alert - Responsive */}
-      {error && (
+      {/* Error Alert */}
+      {data.error && (
         <div className="p-3 sm:p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg flex gap-2 sm:gap-3">
           <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-xs sm:text-sm font-medium text-red-900 dark:text-red-200 break-words">{error}</p>
+            <p className="text-xs sm:text-sm font-medium text-red-900 dark:text-red-200 break-words">{data.error}</p>
             <p className="text-xs text-red-800 dark:text-red-300 mt-1">
               Intenta actualizar manualmente con el botón de arriba
             </p>
@@ -217,18 +204,18 @@ export default function AdjustmentsHistoryPage() {
       <Card className="dark:bg-gray-900 dark:border-gray-800">
         <CardHeader className="px-4 sm:px-6">
           <CardTitle className="text-lg sm:text-xl">
-            Ajustes Realizados ({adjustments?.length || 0})
+            Ajustes Realizados ({data.adjustments?.length || 0})
           </CardTitle>
         </CardHeader>
         <CardContent className="px-4 sm:px-6">
-          {isLoading ? (
+          {loadState.isLoading ? (
             <div className="text-center py-12">
               <RefreshCw className="h-8 w-8 text-gray-400 animate-spin mx-auto mb-2" />
               <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 font-medium">
                 Cargando ajustes...
               </p>
             </div>
-          ) : !adjustments || adjustments.length === 0 ? (
+          ) : !data.adjustments || data.adjustments.length === 0 ? (
             <div className="text-center py-12">
               <History className="h-10 w-10 sm:h-12 sm:w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
               <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 font-medium">
@@ -240,7 +227,7 @@ export default function AdjustmentsHistoryPage() {
             </div>
           ) : (
             <div className="space-y-3 sm:space-y-4">
-              {adjustments.map((adjustment) => {
+              {data.adjustments.map((adjustment) => {
                 const isSuma = adjustment.early_departure_reason?.startsWith('SUMA')
                 const isResta = adjustment.early_departure_reason?.startsWith('RESTA')
 

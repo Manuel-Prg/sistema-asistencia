@@ -9,14 +9,6 @@ export interface ActiveStudent {
     room: string
 }
 
-export interface CreateUserData {
-    email: string
-    password: string
-    fullName: string
-    role: "student" | "supervisor"
-    studentType?: "servicio_social" | "practicas"
-    requiredHours?: number
-}
 
 export interface AdjustmentRecord {
     id: string

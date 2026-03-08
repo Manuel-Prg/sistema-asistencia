@@ -5,6 +5,7 @@
 Este proyecto incluye **4 guías completas** en español que cubren todos los aspectos del sistema.
 
 ---
+[![React Doctor](https://www.react.doctor/share/badge?p=sistema-asistencias&s=87&e=1&w=115&f=77)](https://www.react.doctor/share?p=sistema-asistencias&s=87&e=1&w=115&f=77)
 
 ## 📚 Documentos Disponibles
 
