@@ -60,12 +60,14 @@ export default async function StudentDashboard() {
     )
   }
 
-  const { data: activeRecord } = await supabase
+  const { data: activeRecords } = await supabase
     .from("attendance_records")
     .select("*")
     .eq("student_id", user.id)
     .is("check_out", null)
-    .single()
+    .order("check_in", { ascending: false })
+
+  const activeRecord = activeRecords && activeRecords.length > 0 ? activeRecords[0] : null
 
   const { data: recentRecords } = await supabase
     .from("attendance_records")

@@ -16,13 +16,30 @@ export async function checkIn(room: string, shift: "matutino" | "vespertino" | "
     return { error: "No autenticado" }
   }
 
-  // Verificar si hay una sesión activa
-  const { data: activeRecord } = await supabase
+  // Verificar si hay una sesión activa (usando array para evitar errores por duplicados accidentales)
+  const { data: activeRecords } = await supabase
     .from("attendance_records")
     .select("*")
     .eq("student_id", user.id)
     .is("check_out", null)
-    .single()
+    .order("check_in", { ascending: false })
+
+  const activeRecord = activeRecords && activeRecords.length > 0 ? activeRecords[0] : null
+
+  // Limpiar duplicados automáticamente
+  if (activeRecords && activeRecords.length > 1) {
+    const duplicates = activeRecords.slice(1)
+    for (const dup of duplicates) {
+      await supabase
+        .from("attendance_records")
+        .update({
+          check_out: dup.check_in,
+          hours_worked: 0,
+          early_departure_reason: "Registro duplicado cerrado automáticamente"
+        })
+        .eq("id", dup.id)
+    }
+  }
 
   if (activeRecord) {
     // Verificación de sesiones "pegadas" (más de 24 horas)
@@ -77,15 +94,32 @@ export async function checkOut(earlyDepartureReason?: string) {
     return { error: "No autenticado" }
   }
 
-  const { data: activeRecord, error: fetchError } = await supabase
+  const { data: activeRecords, error: fetchError } = await supabase
     .from("attendance_records")
     .select("*")
     .eq("student_id", user.id)
     .is("check_out", null)
-    .single()
+    .order("check_in", { ascending: false })
 
-  if (fetchError || !activeRecord) {
+  if (fetchError || !activeRecords || activeRecords.length === 0) {
     return { error: "No hay entrada activa para registrar salida" }
+  }
+
+  const activeRecord = activeRecords[0]
+
+  // Limpiar duplicados si existen durante el checkout
+  if (activeRecords.length > 1) {
+    const duplicates = activeRecords.slice(1)
+    for (const dup of duplicates) {
+      await supabase
+        .from("attendance_records")
+        .update({
+          check_out: dup.check_in,
+          hours_worked: 0,
+          early_departure_reason: "Registro duplicado cerrado automáticamente en checkout"
+        })
+        .eq("id", dup.id)
+    }
   }
 
   const checkInTime = new Date(activeRecord.check_in)
