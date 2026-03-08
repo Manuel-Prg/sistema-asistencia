@@ -1,14 +1,11 @@
 //app/layout.tsx
 import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from 'sileo'
 import 'sileo/styles.css'
-// import SnowAnimation from '@/components/snow-animation'
-
+import { MaintenanceBanner } from '@/components/maintenance-banner'
 
 export const metadata: Metadata = {
   title: 'Sistema de Asistencia Para Estudiantes de Prácticas y Servicio Social',
@@ -27,16 +24,15 @@ export const metadata: Metadata = {
   },
 }
 
-import { MaintenanceBanner } from '@/components/maintenance-banner'
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
+    // Archer is applied via globals.css — no className needed on body
     <html lang="es" suppressHydrationWarning>
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -48,7 +44,6 @@ export default function RootLayout({
         </ThemeProvider>
         <Toaster position="top-center" options={{ roundness: 12, duration: 4000 }} />
         <Analytics />
-        {/* <SnowAnimation /> */}
       </body>
     </html>
   )
