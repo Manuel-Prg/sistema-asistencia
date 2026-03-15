@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     // Archer is applied via globals.css — no className needed on body
     <html lang="es" suppressHydrationWarning>
-      <body>
+      <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
