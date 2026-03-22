@@ -284,6 +284,25 @@ export function CheckInOutCard({ activeRecord }: CheckInOutCardProps) {
                 <LogIn className="h-5 w-5 sm:h-6 sm:w-6" />
                 {loading ? "Registrando..." : "Registrar Entrada"}
               </Button>
+
+              <div className="relative pt-2 pb-2">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-gray-200 dark:border-gray-700" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white dark:bg-gray-900 px-2 text-gray-500 dark:text-gray-400">O asiste a un evento</span>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => router.push('/student/eventos')}
+                disabled={loading}
+                variant="outline"
+                className="w-full gap-2 h-12 sm:h-14 text-base sm:text-lg font-semibold border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all duration-200"
+              >
+                <MapPin className="h-5 w-5 sm:h-6 sm:w-6" />
+                Registrar Evento (Horas Dobles)
+              </Button>
             </div>
           )}
 

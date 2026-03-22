@@ -82,6 +82,78 @@ export async function checkIn(room: string, shift: "matutino" | "vespertino" | "
   return { success: true }
 }
 
+export async function checkInEvent(eventName: string, shift: "matutino" | "vespertino" | "completo") {
+  const supabase = await getSupabaseServerClient()
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser()
+
+  if (userError || !user) {
+    return { error: "No autenticado" }
+  }
+
+  const { data: activeRecords } = await supabase
+    .from("attendance_records")
+    .select("*")
+    .eq("student_id", user.id)
+    .is("check_out", null)
+    .order("check_in", { ascending: false })
+
+  const activeRecord = activeRecords && activeRecords.length > 0 ? activeRecords[0] : null
+
+  if (activeRecords && activeRecords.length > 1) {
+    const duplicates = activeRecords.slice(1)
+    for (const dup of duplicates) {
+      await supabase
+        .from("attendance_records")
+        .update({
+          check_out: dup.check_in,
+          hours_worked: 0,
+          early_departure_reason: "Registro duplicado cerrado automáticamente"
+        })
+        .eq("id", dup.id)
+    }
+  }
+
+  if (activeRecord) {
+    const checkInTime = new Date(activeRecord.check_in)
+    const now = new Date()
+    const hoursElapsed = (now.getTime() - checkInTime.getTime()) / (1000 * 60 * 60)
+
+    if (hoursElapsed > 24) {
+      const autoCheckOutDate = new Date(checkInTime.getTime() + (4 * 60 * 60 * 1000))
+      await supabase
+        .from("attendance_records")
+        .update({
+          check_out: autoCheckOutDate.toISOString(),
+          hours_worked: 4.0,
+          early_departure_reason: "Auto-cerrado por sistema (nueva entrada tras +24h)"
+        })
+        .eq("id", activeRecord.id)
+    } else {
+      return { error: "Ya tienes una entrada activa. Debes registrar salida primero." }
+    }
+  }
+
+  const room = `[EVENTO] ${eventName}`
+
+  const { error } = await supabase.from("attendance_records").insert({
+    student_id: user.id,
+    check_in: new Date().toISOString(),
+    shift,
+    room,
+  })
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath("/student")
+  return { success: true }
+}
+
 export async function checkOut(earlyDepartureReason?: string) {
   const supabase = await getSupabaseServerClient()
 
@@ -124,21 +196,27 @@ export async function checkOut(earlyDepartureReason?: string) {
 
   const checkInTime = new Date(activeRecord.check_in)
   const checkOutTime = new Date()
-  const hoursWorkedRaw = (checkOutTime.getTime() - checkInTime.getTime()) / (1000 * 60 * 60)
+  let hoursWorkedRaw = (checkOutTime.getTime() - checkInTime.getTime()) / (1000 * 60 * 60)
 
-  // APLICAR LÍMITE DE 10 HORAS
-  // Si trabajó más de 10 horas, registramos solo 10.
-  const hoursWorked = Math.min(hoursWorkedRaw, 10.0)
+  const isEvent = activeRecord.room?.startsWith("[EVENTO]")
+
+  if (isEvent) {
+    hoursWorkedRaw *= 2;
+  }
+
+  // APLICAR LÍMITE (10 HORAS NORMAL, 20 HORAS EVENTOS)
+  const limit = isEvent ? 20.0 : 10.0;
+  const hoursWorked = Math.min(hoursWorkedRaw, limit)
 
   const updateData: any = {
     check_out: checkOutTime.toISOString(),
     hours_worked: hoursWorked,
   }
 
-  if (hoursWorkedRaw > 10.0) {
+  if (hoursWorkedRaw > limit) {
     updateData.early_departure_reason = earlyDepartureReason
-      ? `Límite 10h excedido (+${(hoursWorkedRaw - 10).toFixed(1)}h reales). ${earlyDepartureReason}`
-      : `Auto-limitado a 10h (real: ${hoursWorkedRaw.toFixed(1)}h)`
+      ? `Límite ${limit}h excedido (+${(hoursWorkedRaw - limit).toFixed(1)}h reales). ${earlyDepartureReason}`
+      : `Auto-limitado a ${limit}h (real: ${hoursWorkedRaw.toFixed(1)}h)`
   } else if (earlyDepartureReason) {
     updateData.early_departure_reason = earlyDepartureReason
   }
